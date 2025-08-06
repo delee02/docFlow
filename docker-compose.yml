@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"    # 호스트 3000번 포트를 컨테이너 80번 포트에 연결 (React는 Nginx 80포트 사용)
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend/workflow
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - python
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/docflow
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+
+
+  python:
+    build: ./python
+    ports:
+      - "5000:5000"
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: docflow
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

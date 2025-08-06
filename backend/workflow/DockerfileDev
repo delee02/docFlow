@@ -1,0 +1,21 @@
+FROM openjdk:21-jdk-slim
+
+WORKDIR /app
+
+# 필요한 툴 한번에 설치 및 클린업
+RUN apt-get update && \
+    apt-get install -y maven curl wget gnupg2 apt-utils software-properties-common && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 의존성 캐시용: pom.xml 복사 후 의존성 미리 다운
+COPY pom.xml ./
+# 실제 소스코드 복사
+COPY src ./src
+
+RUN mvn dependency:go-offline \
+    org.springframework.boot:spring-boot-maven-plugin:3.5.4:help
+
+EXPOSE 8080
+
+# 개발용 실행 (hot reload 안되는 상황이라면, 도커 볼륨 mount로 코드 수정 반영)
+CMD ["mvn", "spring-boot:run"]
