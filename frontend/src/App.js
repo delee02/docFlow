@@ -7,6 +7,7 @@ import PrivateRoute from './components/PrivateRoute';
 import ProtectedRoute from './components/ProtectedRoute'
 import UserForm from './pages/admin/UserForm';
 import TeamAdminList from './pages/admin/TeamPositionManage';
+import DocumentEdit from './pages/documents/EditPage';
 
 import Dashboard from './pages/Dashboard';
 
@@ -21,6 +22,7 @@ function App() {
       <Route path="/admin/team/list" element={<PrivateRoute><ProtectedRoute allowedRoles={'ROLE_ADMIN'}><TeamAdminList /></ProtectedRoute></PrivateRoute>} />
 
       <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+      <Route path="/document/edit" element={<PrivateRoute><DocumentEdit /></PrivateRoute>} />
   
     </Routes>
   );

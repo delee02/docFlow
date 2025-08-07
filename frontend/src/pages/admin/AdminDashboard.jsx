@@ -10,17 +10,21 @@ const AdminDashboard = () => {
     pendingApprovals: 0,
   });
 
-  useEffect(async () => {
-    // TODO: API 호출해서 stats 데이터 받아오기
-    // 예시 하드코딩
-    const {data: totalUser} = await api.get('/admin/user/count');
-    setStats({
-      totalUsers: totalUser,
-      ongoingDocs: 12,
-      pendingApprovals: 4,
-    });
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const { data: totalUser } = await api.get('/admin/user/count');
+        setStats({
+          totalUsers: totalUser,
+          ongoingDocs: 12,
+          pendingApprovals: 4,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchStats();
   }, []);
-
   return (
     <div style={styles.container}>
       <Sidebar />
