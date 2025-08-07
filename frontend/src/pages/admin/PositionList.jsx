@@ -1,0 +1,135 @@
+import React, { useEffect, useState } from 'react';
+import api from '../../api/api';
+import PositionModal from './PositionModal'
+
+const PositionList = () => {
+  const [positions, setPositions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isModalOpen, setModalOpen] =useState(false);
+
+  const fetchPositions = async () => {
+    try {
+        const res = await api.get('/admin/position/list');
+        setPositions(res.data);
+      } catch (err) {
+        console.error('직책 목록 로딩 실패', err);
+      } finally {
+        setLoading(false); 
+      }
+    };
+
+    useEffect(() => {
+      fetchPositions();
+    }, []);
+
+
+    const [editPosition, setEditPosition] = useState(null);
+    const handleEditPosition = (position) => {
+      setEditPosition(position);
+      setModalOpen(true);
+    };
+
+    if (loading) return <p>로딩 중...</p>;
+    if (error) return <p>에러 발생: {error.message}</p>;
+
+    return (
+      <div style={styles.container}>
+        <main style={styles.mainContent}>
+          <div style={styles.header}>
+            <button onClick={() => setModalOpen(true)} style={styles.addButton}>➕ 추가</button>
+          </div>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>no</th>
+                <th style={styles.th}>직책</th>
+                <th style={styles.th}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {positions.map((position,index) => (
+                <tr key={position.positionId} style={styles.tr}>
+                  <td style={styles.td}>{index+1}</td>
+                  <td style={styles.td}>{position.positionName}</td>
+                  <td style={{ padding: '12px' }}>
+                  <button
+                    onClick={() => handleEditPosition(position)}
+                    style={{ cursor: 'pointer', backgroundColor: '#ffc107', border: 'none', borderRadius: '4px', padding: '4px 8px' }}
+                  >
+                    수정
+                  </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <PositionModal
+          isOpen = {isModalOpen}
+          onClose = {() => {
+            setModalOpen(false);
+            setEditPosition(null);
+          }}
+          onPositionAdded = {fetchPositions}
+          editPosition = {editPosition}
+          />
+        </main>
+      </div>
+    );
+  };
+
+  const styles = {
+    header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+  },
+  addButton: {
+    backgroundColor: '#28a745',
+    color: 'white',
+    border: 'none',
+    padding: '8px 16px',
+    fontSize: '14px',
+    cursor: 'pointer',
+    borderRadius: '4px',
+  },
+    container: {
+      display: 'flex',
+    },
+    mainContent: {
+      flex: 1,
+      padding: '30px',
+      backgroundColor: '#f0f2f5',
+      minHeight: '100vh',
+    },
+    table: {
+      width: '100%',
+      borderCollapse: 'collapse',
+      backgroundColor: '#fff',
+      boxShadow: '0 0 10px rgba(0,0,0,0.05)',
+    },
+    th: {
+      textAlign: 'left',
+      padding: '12px',
+      backgroundColor: '#007bff',
+      color: 'white',
+      fontWeight: 'bold',
+      borderBottom: '2px solid #dee2e6',
+    },
+    tr: {
+      borderBottom: '1px solid #dee2e6',
+    },
+    td: {
+      padding: '12px',
+      color: '#333',
+    },
+    status: {
+      padding: '50px',
+      textAlign: 'center',
+      fontSize: '18px',
+      color: '#555',
+    },
+  };
+
+export default PositionList;
