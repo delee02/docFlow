@@ -43,6 +43,7 @@ const styles = {
     flex: 1,
     padding: '20px',
     backgroundColor: '#f8f9fa',
+    backgroundColor: '',
     minHeight: '100vh',
   },
 };

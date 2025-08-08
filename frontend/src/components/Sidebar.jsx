@@ -40,7 +40,7 @@ const styles = {
   sidebar: {
     width: '220px',
     height: '100vh',
-    backgroundColor: '#007bff',
+    backgroundColor: '#454f7cff',
     color: 'white',
     padding: '20px',
     boxSizing: 'border-box',

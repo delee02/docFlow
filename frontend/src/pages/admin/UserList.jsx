@@ -123,7 +123,7 @@ addButton: {
   th: {
     textAlign: 'left',
     padding: '12px',
-    backgroundColor: '#007bff',
+    backgroundColor: '#454f7cff',
     color: 'white',
     fontWeight: 'bold',
     borderBottom: '2px solid #dee2e6',
