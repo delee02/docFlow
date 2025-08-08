@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import Sidebar from '../../components/Sidebar';
-import { useNavigate } from 'react-router-dom';
-import api from '../../api/api';
 import TeamList from "./TeamList";
 import PositionList from "./PositionList"
 import UserList from "./UserList"

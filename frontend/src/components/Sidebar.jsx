@@ -25,6 +25,7 @@ const Sidebar = () => {
           </>
         )}
         <li><NavLink to="/dashboard" style={styles.link} activeStyle={styles.active}>대시보드</NavLink></li>
+        <li><NavLink to="/document/edit" style={styles.link} activeStyle={styles.active}>결재 문서 작성</NavLink></li>
       </ul>
       
 
@@ -39,7 +40,7 @@ const styles = {
   sidebar: {
     width: '220px',
     height: '100vh',
-    backgroundColor: '#007bff',
+    backgroundColor: '#454f7cff',
     color: 'white',
     padding: '20px',
     boxSizing: 'border-box',

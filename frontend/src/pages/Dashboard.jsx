@@ -10,16 +10,18 @@ const Dashboard = () => {
     pendingApprovals: 0,
   });
 
-  useEffect(async () => {
-    // TODO: API 호출해서 stats 데이터 받아오기
-    // 예시 하드코딩
-    setStats({
-      totalUsers: 150,
-      ongoingDocs: 12,
-      pendingApprovals: 4,
-    });
-  }, []);
-
+  useEffect(() => {
+    async function fetchStats(){
+      // TODO: API 호출해서 stats 데이터 받아오기
+      // 예시 하드코딩
+      setStats({
+        totalUsers: 150,
+        ongoingDocs: 12,
+        pendingApprovals: 4,
+      });
+    }
+    fetchStats();
+    }, []);
   return (
     <div style={styles.container}>
       <Sidebar />
@@ -41,6 +43,7 @@ const styles = {
     flex: 1,
     padding: '20px',
     backgroundColor: '#f8f9fa',
+    backgroundColor: '',
     minHeight: '100vh',
   },
 };
