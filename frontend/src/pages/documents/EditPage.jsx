@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
+import FileAttachment from "../FileAttachment";
 import { useEditor, EditorContent, isActive } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from '@tiptap/extension-link';
@@ -288,6 +289,7 @@ const EditPage = () => {
               <div style={styles.editorBox}>
                   <EditorContent editor={editor} />
               </div>
+              <FileAttachment />
               </div>
               </main>
               </div>
