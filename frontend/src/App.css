@@ -36,3 +36,39 @@
     transform: rotate(360deg);
   }
 }
+.ProseMirror:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.ProseMirror table {
+  width: 30%;       /* 표 가로 너비: 부모 요소에 맞춤 */
+  height:auto;     /* 표 세로 높이: 원하는 고정값(px 등) */
+  border-collapse: collapse;
+  table-layout: fixed; /* 셀 너비 균등 고정 */
+}
+.ProseMirror th,
+.ProseMirror td {
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 8px;
+  text-align: left;
+  overflow: hidden;
+  white-space: normal;
+  text-overflow: ellipsis;
+  height: auto !important;
+    min-height: 30px;
+  min-width: 50px;
+  overflow-wrap: break-word;
+}
+.table-resizable {
+  resize: both;     
+  overflow: auto; 
+  border: 1px solid #ccc;
+}
+.mention {
+  color: #0077ff;
+  background-color: #e0f0ff;
+  border-radius: 3px;
+  padding: 0 4px;
+}
