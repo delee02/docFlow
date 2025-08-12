@@ -19,4 +19,7 @@ public class Position {
 
     @Column(name="name", nullable = false)
     private String positionName;
+
+    @Column(name="level", nullable = false, unique = true)
+    private Long level;
 }

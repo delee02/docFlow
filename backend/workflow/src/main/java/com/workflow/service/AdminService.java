@@ -106,16 +106,32 @@ public class AdminService {
         teamRepository.save(team);
     }
 
+
+    //positon list
+    public List<PositionDto> getPositionList(){
+        List<Position> positions = positionRepository.findAllByOrderByLevelAsc();
+        List<PositionDto> positionDtoList = new ArrayList<>();
+        for(Position position: positions){
+            PositionDto positionDto = new PositionDto();
+            positionDto.setPositionId(position.getPositionId());
+            positionDto.setPositionName(position.getPositionName());
+            positionDto.setLevel(position.getLevel());
+            positionDtoList.add(positionDto);
+        }
+        return positionDtoList;
+    }
+
     //postion add
-    public boolean createPosition(String positionName){
+    public boolean createPosition(PositionDto positionDto){
         try {
-            boolean positionExist = positionRepository.existsByPositionName(positionName);
+            boolean positionExist = positionRepository.existsByPositionName(positionDto.getPositionName());
             if (positionExist) {
                 System.out.println("같은 직책 이름 존재합니다.");
                 return false;
             }
             Position position = new Position();
-            position.setPositionName(positionName);
+            position.setPositionName(positionDto.getPositionName());
+            position.setLevel(positionDto.getLevel());
             positionRepository.save(position);
             return true;
         }catch (Exception e){
@@ -130,6 +146,7 @@ public class AdminService {
         Position position = positionRepository.findById(positionDto.getPositionId()).orElseThrow(()-> new IllegalArgumentException("직책 없음"));
 
         position.setPositionName(positionDto.getPositionName());
+        position.setLevel(positionDto.getLevel());
         positionRepository.save(position);
     }
 
@@ -167,7 +184,7 @@ public class AdminService {
 
     //list user - > list userDto
     public List<UserResponseDto> userDtoList(){
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findAllByOrderByTeam_TeamNameAscPosition_LevelAsc();
         List<UserResponseDto> userDtoList = new ArrayList<>();
         for(User user: users){
             UserResponseDto userDto = new UserResponseDto();

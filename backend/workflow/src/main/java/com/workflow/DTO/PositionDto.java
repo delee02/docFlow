@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 public class PositionDto {
     private Long positionId;
     private String positionName;
+    private Long level;
 }
