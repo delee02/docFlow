@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MentionRequest {
+public class UserListRequest {
     private Long userId;
+    private String teamName;
+    private String positionName;
     private String name;
 }
