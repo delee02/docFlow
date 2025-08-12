@@ -1,7 +1,6 @@
 package com.workflow.service;
 
-import com.workflow.DTO.UserDto;
-import com.workflow.DTO.request.MentionRequest;
+import com.workflow.DTO.request.UserListRequest;
 import com.workflow.DTO.response.UserResponseDto;
 import com.workflow.entity.User;
 import com.workflow.mapper.UserMapper;
@@ -21,13 +20,15 @@ public class UserService {
     private final UserMapper userMapper;
 
     //멘션에서 쓸 유저 가져가기
-    public List<MentionRequest> getUsers(){
+    public List<UserListRequest> getUsers(){
         List<User> users = userRepository.findAll();
-        List<MentionRequest> mentions = new ArrayList<>();
+        List<UserListRequest> mentions = new ArrayList<>();
         for(User user: users){
-            MentionRequest mentionRequest = new MentionRequest();
+            UserListRequest mentionRequest = new UserListRequest();
             mentionRequest.setUserId(user.getUserId());
             mentionRequest.setName(user.getName());
+            mentionRequest.setTeamName(user.getTeam().getTeamName());
+            mentionRequest.setPositionName(user.getPosition().getPositionName());
             mentions.add(mentionRequest);
         }
         return mentions;

@@ -1,14 +1,11 @@
 package com.workflow.controller;
 
-import com.workflow.DTO.request.MentionRequest;
+import com.workflow.DTO.request.UserListRequest;
 import com.workflow.DTO.response.UserResponseDto;
 import com.workflow.config.JwtUtil;
-import com.workflow.entity.User;
 import com.workflow.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +18,13 @@ import java.util.List;
 @RequestMapping("/user")
 
 public class UserController {
+
     private final UserService userService;
     private final JwtUtil jwtUtil;
     //회사 직원 다 불러오기
     @GetMapping("/list")
-    public ResponseEntity<List<MentionRequest>> getUsers() {
-        List<MentionRequest> users = userService.getUsers();
+    public ResponseEntity<List<UserListRequest>> getUsers() {
+        List<UserListRequest> users = userService.getUsers();
         System.out.println("보내는것드 "+users);
         return ResponseEntity.ok(users);
     }

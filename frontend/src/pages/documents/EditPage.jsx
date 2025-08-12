@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import FileAttachment from "../FileAttachment";
-import { useEditor, EditorContent, isActive } from "@tiptap/react";
+import '../../App.css';
+import ApprovalLine from './ApprovalLine'
+import api from '../../api/api';
+import {templates} from './template.js'
+import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
@@ -14,26 +18,24 @@ import {TableCell} from '@tiptap/extension-table-cell'
 import {TableHeader} from '@tiptap/extension-table-header'
 import { Color } from '@tiptap/extension-color';
 import { TextStyle } from '@tiptap/extension-text-style';
-import '../../App.css';
-import ApprovalLine from './ApprovalLine'
+import Placeholder from '@tiptap/extension-placeholder';
+
 import { MdFormatListBulleted,MdOutlineFormatColorText} from 'react-icons/md';
 import { GoBold, GoItalic, GoStrikethrough,GoListOrdered } from "react-icons/go";
 import { FiExternalLink } from "react-icons/fi";
 import { LuImagePlus, LuUndo2, LuRedo2, LuAlignCenter, LuAlignLeft, LuAlignRight} from "react-icons/lu";
+
 import { CiViewTable } from "react-icons/ci";
 import { SketchPicker } from "react-color";
-import api from '../../api/api';
 
-const templates = {
-  기안서: '제목: \n\n 내용:\n\n 결재 요청',
-  휴가신청서: '휴가종류: \n\n 기간: 2025-08-19~ 2025-08-25'
-};
+
 //멘션을 위해 추가 나중에 server에서 데이터 가져오기
   
 
 const EditPage = () => {
   const [users, setUsers] = useState([]);
-  const [selectedTemplate, setSelectedTemplate] = useState(''); //저장되어 있는 폼 있으면 가져오고 아님말고
+  const [selectedTemplateId, setSelectedTemplateId] = useState('');  // 선택된 id 저장
+  const selectedTemplate = templates.find(t => t.id === selectedTemplateId); // 선택된 id로 템플릿 객체 찾기
   const [title, setTitle] = useState(''); //제목
   const [refresh, setRefresh] = useState(false); //버튼 눌리면 색바뀌게 하려고 
   const [showPicker, setShowPicker] = useState(false); //글자 색 팔레트 
@@ -176,9 +178,7 @@ const EditPage = () => {
                   return [] // 아무것도 입력 안했으면 목록 안 보여줌
                 }
                 return users
-                  .filter(user =>
-                    user.name.toLowerCase().includes(query.toLowerCase())
-                  )
+                  .filter(user => user.name.toLowerCase().includes(query.toLowerCase()))
                   .slice(0, 5);
               },
               render: () => {
@@ -196,6 +196,9 @@ const EditPage = () => {
           TableRow,
           TableCell,
           TableHeader,
+          Placeholder.configure({
+            placeholder: '문서를 작성하세요',
+          }),
 
       ],
 
@@ -237,7 +240,7 @@ const EditPage = () => {
 
       setOpen(false);
     },
-      content: '<p>문서를 작성하세요</p>',
+      content: '',
       
     });
     
@@ -331,17 +334,14 @@ const EditPage = () => {
 
     //저장되어있는 폼 관련 함수
     const handleTemplateChange = (e) => {
-      const value = e.target.value;
-      setSelectedTemplate(value);
-
-      if (value === '기안서') setTitle('기안서 제목');
-      else if (value === '휴가신청서') setTitle('휴가신청서 제목');
-      else setTitle('');
-
-      if (editor && templates[value]) {
-        editor.commands.setContent(templates[value].replace(/\n/g, '<br>'));
-      }
-    };
+      const templateId = e.target.value;
+      setSelectedTemplateId(templateId);
+      const template = templates.find(t => t.id === templateId);
+      if (template) {
+        editor.commands.setContent(template.content, false);
+        // 결재라인도 필요하면 여기서 set 처리
+        }
+      };
 
     const handleTitleChange = (e) => {
       setTitle(e.target.value);
@@ -394,25 +394,26 @@ const EditPage = () => {
         <main style={styles.main}>
           <div style={styles.editorContainer}>
             <h2>결재 문서 작성</h2>
-            <ApprovalLine />
+            <ApprovalLine approvalFlow={selectedTemplate?.approvalFlow || []} />
 
-            <input
+            
+
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
+              <input
               type="text"
               placeholder="문서 제목을 입력하세요"
               value={title}
               onChange={handleTitleChange}
               style={styles.input}
-            />
-
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
+              />
               <select
-                value={selectedTemplate}
+                value={selectedTemplateId}
                 onChange={handleTemplateChange}
                 style={styles.select}
               >
                 <option value="">양식 선택</option>
-                {Object.keys(templates).map(tpl => (
-                  <option key={tpl} value={tpl}>{tpl}</option>
+                {templates.map(t => (
+                  <option key={t.id} value={t.id}>{t.name}</option>
                 ))}
               </select>
               <button
@@ -559,7 +560,7 @@ const styles = {
     flexDirection: "column",
   },
   input: {
-    width: "100%",
+    width: "70%",
     fontSize: 18,
     padding: "8px 12px",
     marginBottom: 20,
@@ -568,10 +569,13 @@ const styles = {
     boxSizing: "border-box",
   },
   select: {
+    width: "7%",
     flex: 1,
-    marginRight: 12,
+    marginRight: 8,
+    marginLeft: 8,
     padding: "8px 12px",
     fontSize: 16,
+    marginBottom: 20,
     borderRadius: 4,
     border: "1px solid #ccc",
   },
@@ -583,6 +587,7 @@ const styles = {
     backgroundColor: "#454f7cff",
     color: "#fff",
     cursor: "pointer",
+    marginBottom: 20,
   },
   toolbarButton: (isActive) => ({
     fontWeight: isActive ? 'bold' : 'normal',

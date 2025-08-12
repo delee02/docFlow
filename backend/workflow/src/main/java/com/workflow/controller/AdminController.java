@@ -115,8 +115,8 @@ public class AdminController {
 
     //직책 리스트
     @GetMapping("/position/list")
-    public ResponseEntity<List<Position>> getPositions() {
-        List<Position> positions = positionRepository.findAll();
+    public ResponseEntity<List<PositionDto>> getPositions() {
+        List<PositionDto> positions = adminService.getPositionList();
         return ResponseEntity.ok(positions);
     }
 
@@ -124,7 +124,7 @@ public class AdminController {
     @PostMapping("/position/new")
     public ResponseEntity<String> createPosition(@RequestBody PositionDto positionDto){
         System.out.println("가져온 거"+positionDto);
-        boolean user = adminService.createTeam(positionDto.getPositionName());
+        boolean user = adminService.createPosition(positionDto);
 
         if(user){
             return ResponseEntity.ok("Creating position success");
@@ -133,7 +133,7 @@ public class AdminController {
         }
     }
 
-    //팀 수정
+    //position 수정
     @PostMapping("/position/edit/{positionId}")
     public ResponseEntity<String> updatePosition(@PathVariable Long positionId, @RequestBody PositionDto positionDto) {
         try {

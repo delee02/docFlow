@@ -44,6 +44,7 @@ const PositionList = () => {
               <tr>
                 <th style={styles.th}>no</th>
                 <th style={styles.th}>직책</th>
+                <th style={styles.th}>레벨</th>
                 <th style={styles.th}></th>
               </tr>
             </thead>
@@ -52,6 +53,7 @@ const PositionList = () => {
                 <tr key={position.positionId} style={styles.tr}>
                   <td style={styles.td}>{index+1}</td>
                   <td style={styles.td}>{position.positionName}</td>
+                  <td style={styles.td}>{position.level}순위</td>
                   <td style={{ padding: '12px' }}>
                   <button
                     onClick={() => handleEditPosition(position)}
@@ -86,7 +88,7 @@ const PositionList = () => {
     marginBottom: '20px',
   },
   addButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#454f7cff',
     color: 'white',
     border: 'none',
     padding: '8px 16px',
@@ -112,7 +114,7 @@ const PositionList = () => {
     th: {
       textAlign: 'left',
       padding: '12px',
-      backgroundColor: '#007bff',
+      backgroundColor: '#454f7cff',
       color: 'white',
       fontWeight: 'bold',
       borderBottom: '2px solid #dee2e6',
