@@ -14,6 +14,7 @@ import com.workflow.repository.PositionRepository;
 import com.workflow.repository.TeamRepository;
 import com.workflow.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +32,8 @@ public class AdminService {
     private final TeamRepository teamRepository;
     private final PositionRepository positionRepository;
     private final PasswordEncoder passwordEncoder;
+    private static final String USERLIST_KEY = "userList";
+    private final RedisTemplate<String, Object> redisTemplate;
 
     //유저 생성
     public boolean createUser(UserRequestDto userRequestDto) {
@@ -43,6 +47,7 @@ public class AdminService {
             }
             User user = RequestToUser(userRequestDto);
             userRepository.save(user);
+            deleteUserListRedis("유저 추가");
             return true;
         }catch (Exception e ){
             System.out.println("새로운 사람 추가 못함");
@@ -70,6 +75,8 @@ public class AdminService {
         if (newPassword != null && !newPassword.trim().isEmpty()) {
             user.setPassword(passwordEncoder.encode(newPassword));
         }
+
+        deleteUserListRedis("유저 수정");
 
         userRepository.save(user);
     }
@@ -104,6 +111,8 @@ public class AdminService {
 
         team.setTeamName(teamDto.getTeamName());
         teamRepository.save(team);
+
+        deleteUserListRedis("팀 수정");
     }
 
 
@@ -148,8 +157,17 @@ public class AdminService {
         position.setPositionName(positionDto.getPositionName());
         position.setLevel(positionDto.getLevel());
         positionRepository.save(position);
+
+        deleteUserListRedis("직책수정");
     }
 
+    //redis 새로 등록을 위한 redis 삭제
+    public void deleteUserListRedis(String what){
+        Boolean success = redisTemplate.delete(USERLIST_KEY);
+        System.out.println(what+" Redis 삭제 시도: key=" + USERLIST_KEY + ", 결과=" + success);
+    }
+
+/// ///////////////mapper
     //user -> userResponseDto
     public UserResponseDto toUserResponseDto(User user){
         UserResponseDto userResponseDto = new UserResponseDto();
