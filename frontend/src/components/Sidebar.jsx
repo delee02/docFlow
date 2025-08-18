@@ -25,6 +25,7 @@ const Sidebar = () => {
           </>
         )}
         <li><NavLink to="/dashboard" style={styles.link} activeStyle={styles.active}>대시보드</NavLink></li>
+        <li><NavLink to="/document/list" style={styles.link} activeStyle={styles.active}>결재 문서 리스트</NavLink></li>
         <li><NavLink to="/document/edit" style={styles.link} activeStyle={styles.active}>결재 문서 작성</NavLink></li>
       </ul>
       

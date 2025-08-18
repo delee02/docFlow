@@ -22,7 +22,13 @@ public class Document {
 
     private String title;
     private String type;
+    private String content;
+
+    //나중에 팀이동, 승진해도 예전에 썼던 문서들은 바뀌면 안되기 때문에 중복정보이지만 저장해놓음
     private Long writeId;
+    private String writerName;
+    private String writerPosition;
+    private String writerTeam;
 
     @Enumerated(EnumType.STRING)
     private DOCUMENTSTATUS status;

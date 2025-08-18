@@ -5,7 +5,7 @@ import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persist
 export const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            gcTime: 1000 * 60 * 60 * 3, //3일 캐시유지
+            gcTime: 1000 * 60 * 60 * 24, //3일 캐시유지
             staleTime: 0,
         },
     },
