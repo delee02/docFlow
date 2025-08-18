@@ -1,5 +1,12 @@
 export const templates = [
   {
+    id: 'free',
+    name: '양식 선택',
+    content: ``,
+    approvalFlow: [
+    ],
+  },
+  {
     id: 'vacation',
     name: '휴가 신청서',
     content: `<div style="display: flex; flex-direction: column; gap: 12px; max-width: 600px;">

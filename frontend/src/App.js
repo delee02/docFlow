@@ -10,6 +10,7 @@ import UserForm from './pages/admin/UserForm';
 import TeamAdminList from './pages/admin/TeamPositionManage';
 import DocumentEdit from './pages/documents/EditPage';
 import Dashboard from './pages/Dashboard';
+import DocumentList from './pages/documents/DocumentList'
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ function App() {
 
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/document/edit" element={<PrivateRoute><DocumentEdit /></PrivateRoute>} />
+        <Route path="/document/list" element={<PrivateRoute><DocumentList /></PrivateRoute>} />
     
       </Routes>
     </QueryClientProvider>
