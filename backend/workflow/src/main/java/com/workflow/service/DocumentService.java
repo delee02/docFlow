@@ -4,6 +4,8 @@ import com.workflow.DTO.UserDto;
 import com.workflow.DTO.request.ApproverRequest;
 import com.workflow.DTO.request.DocumentRequest;
 import com.workflow.DTO.request.WriterRequest;
+import com.workflow.DTO.response.DocumentResponse;
+import com.workflow.DTO.response.MyApprovalListResponse;
 import com.workflow.constants.APPROVALSTATUS;
 import com.workflow.constants.DOCUMENTSTATUS;
 import com.workflow.entity.ApprovalLine;
@@ -35,29 +37,82 @@ public class DocumentService {
         //redis 삭제
         if(exist) redisTemplate.delete(key);
 
-        //바로 다음 사람 1번 approval status pending으로 바꾸기
-
-
         //디비 저장
         documentRepository.save(newDocument);
     }
+    //서류 업데이트
+    public void updateDocument(DocumentResponse response) {
+        Document updateDoc = documentRepository.findById(response.getId()).orElseThrow(() -> new NullPointerException("업데이트 할 문서 없음"));
+
+        updateDoc.setTitle(response.getTitle());
+        updateDoc.setContent(response.getContent());
+        updateDoc.setType(response.getTemplateType());
+
+        //나중에 직책이나 팀 변하면 같이 변해는게 아니고 로그처럼 남아있어야해서
+        List<ApprovalLine> approvalLines = new ArrayList<>();
+        for(ApproverRequest approverRequest: response.getApprovers()){
+            ApprovalLine approvalLine = new ApprovalLine();
+            approvalLine.setUserId(approverRequest.getUserId());
+            approvalLine.setName(approverRequest.getName());
+            approvalLine.setTeamName(approverRequest.getTeamName());
+            approvalLine.setPositionName(approverRequest.getPositionName());
+            approvalLine.setDocument(updateDoc);
+            approvalLine.setApprovalOrder(approverRequest.getApprovalOrder());
+            approvalLines.add(approvalLine);
+        }
+        updateDoc.getApprovalLines().clear();
+        updateDoc.getApprovalLines().addAll(approvalLines);
+        updateDoc.setUpdateAt(LocalDateTime.now());
+        updateDoc.setWriteId(response.getWriter().getId());
+        updateDoc.setWriterTeam(response.getWriter().getName());
+        updateDoc.setWriterPosition(response.getWriter().getPositionName());
+
+        documentRepository.save(updateDoc);
+        String key = "draft:"+response.getWriter().getId();
+        Boolean exist = Boolean.TRUE.equals(redisTemplate.hasKey(key));
+
+        //redis 삭제
+        if(exist) redisTemplate.delete(key);
+    }
 
     //서류 전체 리스트
-    public List<DocumentRequest> getAllList() {
-        List<Document> document = documentRepository.findAll();
-        List<DocumentRequest> documentRequestList = new ArrayList<>();
+    public List<DocumentResponse> getAllList(Long userId) {
+        List<Document> document = documentRepository.findAllByWriteId(userId);
+        List<DocumentResponse> documentResponses = new ArrayList<>();
         for(Document doc : document){
-            documentRequestList.add(entityToDto(doc));
+            documentResponses.add(entityToResDto(doc));
         }
-        return documentRequestList;
+        return documentResponses;
     }
 
     //상태별로 가져오기
     public void getListByStatus(String status) {
     }
 
+    //해당 문서 정보 가져오기
+    public DocumentRequest getDocDetail(Long docId) {
+        Document document = documentRepository.findById(docId).orElseThrow(() -> new NullPointerException("문서 없음"));
+        return entityToReqDto(document);
+    }
+
+    //기안 내는 사람이 제출 했을 때
+    public void submitMydoc(Long docId) {
+        //승인하는 사람 1의 status를 pending으로 서류 in Progress로 업데이트해야함
+        Document document = documentRepository.findById(docId).orElseThrow(() -> new NullPointerException("문서 없음"));
+        document.setStatus(DOCUMENTSTATUS.IN_PROGRESS);
+        document.getApprovalLines().stream()
+                .filter(a -> a.getApprovalOrder() == 1)
+                .forEach(a -> a.setStatus(APPROVALSTATUS.PENDING));
+    }
+
+    //나랑 연관되어 있는 서류
+    public MyApprovalListResponse MyApprovalList(Long userId) {
+
+    }
+
     /// //////////////mapper
-    public DocumentRequest entityToDto(Document document){
+    /// doc req
+    public DocumentRequest entityToReqDto(Document document){
         DocumentRequest documentRequest = new DocumentRequest();
         documentRequest.setTitle(document.getTitle());
         documentRequest.setTemplateType(document.getType());
@@ -85,6 +140,39 @@ public class DocumentService {
 
         return documentRequest;
     }
+    //doc response
+    public DocumentResponse entityToResDto(Document document){
+        DocumentResponse documentResponse = new DocumentResponse();
+        documentResponse.setId(document.getId());
+        documentResponse.setTitle(document.getTitle());
+        documentResponse.setTemplateType(document.getType());
+        documentResponse.setContent(document.getContent());
+        documentResponse.setStatus(document.getStatus());
+
+        WriterRequest writer = new WriterRequest();
+        writer.setId(document.getWriteId());
+        writer.setName(document.getWriterName());
+        writer.setTeamName(document.getWriterTeam());
+        writer.setPositionName(document.getWriterPosition());
+        documentResponse.setWriter(writer);
+
+        List<ApproverRequest> approverRequests = new ArrayList<>();
+        for(ApprovalLine approver : document.getApprovalLines()){
+            ApproverRequest approverRequest = new ApproverRequest();
+            approverRequest.setUserId(approver.getUserId());
+            approverRequest.setName(approver.getName());
+            approverRequest.setTeamName(approver.getTeamName());
+            approverRequest.setPositionName(approver.getPositionName());
+            approverRequest.setApprovalOrder(approver.getApprovalOrder());
+            approverRequests.add(approverRequest);
+        }
+        documentResponse.setApprovers(approverRequests);
+
+        return documentResponse;
+    }
+
+
+
 
     public Document dtoToEntity(DocumentRequest request){
         Document document = new Document();
@@ -106,16 +194,50 @@ public class DocumentService {
             approvalLine.setPositionName(approverRequest.getPositionName());
             approvalLine.setDocument(document);
             approvalLine.setApprovalOrder(approverRequest.getApprovalOrder());
-            if(approverRequest.getApprovalOrder() == 1) {
+           /* if(approverRequest.getApprovalOrder() == 1) {
                 approvalLine.setStatus(APPROVALSTATUS.PENDING);
-            }
+            }*/
             approvalLines.add(approvalLine);
         }
         document.setApprovalLines(approvalLines);
         document.setCreateAt(LocalDateTime.now());
-        document.setStatus(DOCUMENTSTATUS.IN_PROGRESS);
+        document.setStatus(DOCUMENTSTATUS.DRAFT); //내 글 수정도 해야하니까 일단 저장해놓음 나의 문서에서 결재를 누르면 INPROGRESS로 바꿈
 
         return document;
     }
+
+    public Document dtoToEntity(DocumentResponse response){
+        Document document = new Document();
+        document.setId(response.getId());
+        document.setTitle(response.getTitle());
+        document.setType(response.getTemplateType());
+        document.setContent(response.getContent());
+        document.setWriteId(response.getWriter().getId());
+        document.setWriterName(response.getWriter().getName());
+        document.setWriterTeam(response.getWriter().getTeamName());
+        document.setWriterPosition(response.getWriter().getPositionName());
+
+        //나중에 직책이나 팀 변하면 같이 변해는게 아니고 로그처럼 남아있어야해서
+        List<ApprovalLine> approvalLines = new ArrayList<>();
+        for(ApproverRequest approverRequest: response.getApprovers()){
+            ApprovalLine approvalLine = new ApprovalLine();
+            approvalLine.setUserId(approverRequest.getUserId());
+            approvalLine.setName(approverRequest.getName());
+            approvalLine.setTeamName(approverRequest.getTeamName());
+            approvalLine.setPositionName(approverRequest.getPositionName());
+            approvalLine.setDocument(document);
+            approvalLine.setApprovalOrder(approverRequest.getApprovalOrder());
+           /* if(approverRequest.getApprovalOrder() == 1) {
+                approvalLine.setStatus(APPROVALSTATUS.PENDING);
+            }*/
+            approvalLines.add(approvalLine);
+        }
+        document.setApprovalLines(approvalLines);
+        document.setCreateAt(LocalDateTime.now());
+        document.setStatus(DOCUMENTSTATUS.DRAFT); //내 글 수정도 해야하니까 일단 저장해놓음 나의 문서에서 결재를 누르면 INPROGRESS로 바꿈
+
+        return document;
+    }
+
 
 }

@@ -5,10 +5,10 @@ import api from '../../api/api'
 
 const DocumentList = () => {
     const navigate = useNavigate();
-    const [document, setDocument] = useState([]);
+    const [approval, setApproval] = useState([]);
     useEffect (() => {
-        api.get("/document/list",{ params: { status: "" } })
-        .then(res => setDocument(res.data))
+        api.get("/document/myApprovalList")
+        .then(res => setApproval(res.data))
         .catch(err => console.error('서류 목록 로딩 실패:', err));
 
     },[]);
@@ -38,7 +38,7 @@ const DocumentList = () => {
             </tr>
           </thead>
           <tbody>
-            {document.map((doc,index) => (
+            {approval.map((doc,index) => (
               <tr key={doc.id} style={styles.tr}>
                 <td style={styles.td}>{index +1}</td>
                 <td style={styles.td}>{doc.templateType}-{doc.id}</td>

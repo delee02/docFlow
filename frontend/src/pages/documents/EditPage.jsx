@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import FileAttachment from "../FileAttachment";
 import '../../App.css';
 import ApprovalLine from './ApprovalLine';
 import api from '../../api/api';
-import { restoreDraft } from '../documents/js/restoreDraft';
 import { templates } from './js/template.js';
 import {saveDocument} from './js/saveDocument.js'
 import { useDocumentAutoSave } from "./js/useDocumentAutoSave";
+import { restoreDraft, fetchRedisDraft, fetchDBDraft } from "../../util/draftUtil";
 import { useQuery } from '@tanstack/react-query';
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -50,10 +50,10 @@ const EditPage = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [coords, setCoords] = useState({ left: 0, top: 0 });
 
-  // 캐시 없을 때 api
+  // 멘션 캐시 없을 때 api
   const fetchUsers = () => api.get('/user/list').then(res => res.data);
 
-  // react query로 캐싱
+  //멘션  react query로 캐싱
   const { data: users = [], isLoading, error } = useQuery({
     queryKey: ['users'],
     queryFn: fetchUsers,
@@ -204,39 +204,47 @@ const EditPage = () => {
 
   const [writer, setWriter] = useState({ team: '-', position: '-', name: '-' });
   const [approvers, setApprovers] = useState([]);
+  const { docId } = useParams();
+
 
   // 자동 저장
-  useDocumentAutoSave({ documentId: documentId ? documentId : "", writer, title, templateType: selectedTemplateId, approvers, editor });
+  useDocumentAutoSave({ documentId: docId ? docId : "", writer, title, templateType: selectedTemplateId, approvers, editor });
 
-  // 저장되어 있는 문서 가져오기
+
+  const applyDraftData = (data) => {
+    if (!data) return;
+    setTitle(data.title);
+    setSelectedTemplateId(data.templateType);
+    setApprovers(data.approvers);
+    setWriter(data.writer);
+    if (editor) editor.commands.setContent(data.content);
+    setDraftLoaded(true);
+  };
+  //저장된 내문서 가져와서 수정할 때
   useEffect(() => {
-    if (!writer?.id || !editor || draftLoaded) return;
-    const savedDraft = restoreDraft(writer.id);
-    if (savedDraft) {
-      setTitle(savedDraft.title);
-      setSelectedTemplateId(savedDraft.templateType);
-      setApprovers(savedDraft.approvers);
-      setWriter(savedDraft.writer);
-      if (editor) editor.commands.setContent(savedDraft.content);
-      setDraftLoaded(true);
-      return;
-    }
+    if (!editor || draftLoaded) return;
 
-    api.get(`/document/autoSave`)
-      .then(res => {
-        const redisDraft = res.data;
-        if (redisDraft) {
-          setTitle(redisDraft.title);
-          setSelectedTemplateId(redisDraft.templateType);
-          setApprovers(redisDraft.approvers);
-          setWriter(redisDraft.writer);
-          editor.commands.setContent(redisDraft.content);
-        }
-      })
-      .catch(err => console.log("redis 이어쓰기 가져오기 실패", err))
-      .finally(() => setDraftLoaded(true));
-  }, [writer, editor, draftLoaded]);
+    const loadDraft = async () => {
+      //DB
+      if (docId) {
+        const dbData = await fetchDBDraft(docId);
+        if (dbData) return applyDraftData(dbData);
+      }else{
+        //로컬 캐시
+        const savedDraft = writer?.id ? restoreDraft(writer.id) : null;
+        if (savedDraft) return applyDraftData(savedDraft);
 
+        //Redis
+        const redisDraft = await fetchRedisDraft();
+        if (redisDraft) applyDraftData(redisDraft);
+        };
+      }
+
+    loadDraft();
+  }, [docId, editor, writer, draftLoaded]);
+
+
+  
   const selectUserByIndex = (index) => {
     const user = filteredUsers[index];
     if (!editor || !user) return;
@@ -324,7 +332,7 @@ const EditPage = () => {
               style={styles.saveButton}
               onClick={() => saveDocument({
                 editor,
-                documentId,
+                docId,
                 title,
                 selectedTemplateId,
                 writer,
