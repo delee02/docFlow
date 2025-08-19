@@ -1,6 +1,8 @@
 package com.workflow.controller;
 
 import com.workflow.DTO.request.DocumentRequest;
+import com.workflow.DTO.response.DocumentResponse;
+import com.workflow.DTO.response.MyApprovalListResponse;
 import com.workflow.DTO.response.UserResponseDto;
 import com.workflow.entity.User;
 import com.workflow.service.DocumentService;
@@ -67,6 +69,7 @@ public class DocumentController {
             documentService.saveDocument(request);
             System.out.println("문서 저장 완료");
             return ResponseEntity.ok("ok");
+
         }catch (Exception e) {
             System.out.println("저장 실패");
             e.printStackTrace();
@@ -74,18 +77,70 @@ public class DocumentController {
         }
     }
 
+    //서류 수정
+    @PostMapping("/update")
+    public  ResponseEntity<String> saveDocument(@RequestBody DocumentResponse response, @AuthenticationPrincipal User user){
+        System.out.println("수정"+ response);
+        try {
+            //유저 한번 더 확인
+            if(!user.getUserId().equals(response.getWriter().getId())){
+                System.out.println("유저가 다릅니다.");
+                return ResponseEntity.badRequest().body("유저가 다릅니다.");
+            }
+            documentService.updateDocument(response);
+            System.out.println("문서 수정 완료");
+            return ResponseEntity.ok("ok");
+
+        }catch (Exception e) {
+            System.out.println("수정 실패");
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("수정 실패");
+        }
+    }
+
     //문서 리스트
     @GetMapping("/list")
-    public List<DocumentRequest> list( @RequestParam(required = false) String status) {
+    public List<DocumentResponse> list( @RequestParam(required = false) String status, @AuthenticationPrincipal User user) {
+        //내가 쓴 문서 다 가져옴
         if (status == null || status.equals("")) {
-            List<DocumentRequest> docs = documentService.getAllList();
-            System.out.println("문서 리스트" + docs);
+            List<DocumentResponse> docs = documentService.getAllList(user.getUserId());
+            System.out.println("문서 리스트 다ㅏ" + docs);
             return docs;
         } else {
-            List<DocumentRequest> docs = documentService.getAllList();
+            List<DocumentResponse> docs = documentService.getAllList(user.getUserId());
             System.out.println("문서 리스트" + docs);
             return docs;
         }
+    }
+
+    //해당 문서 정보 가져오기
+    @GetMapping("/detail/{docId}")
+    public DocumentRequest docDetail(@PathVariable Long docId) {
+        DocumentRequest docs = documentService.getDocDetail(docId);
+        System.out.println("문서 리스트 다ㅏ" + docs);
+        return docs;
+    }
+
+    //서류 제출
+    @PostMapping("/submit/{docId}")
+    public ResponseEntity<String> submitMydoc(@PathVariable Long docId){
+        //승인하는 사람 1의 status를 pending으로 서류 in Progress로 업데이트해야함
+        try {
+            documentService.submitMydoc(docId);
+            System.out.println("다음 사람 상태 변경 완료");
+            return ResponseEntity.ok("상태변경성공");
+        }catch (Exception e){
+            System.out.println("t상태변경 실패");
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("상태변경 실페");
+        }
+    }
+
+    @GetMapping("/myApprovalList")
+    public ResponseEntity<MyApprovalListResponse> myApprovalList(@AuthenticationPrincipal User user){
+        //userid가 나 의 approval status가 pending인거
+        MyApprovalListResponse list = documentService.MyApprovalList(user.getUserId());
+
     }
 
 

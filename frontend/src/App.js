@@ -11,7 +11,8 @@ import TeamAdminList from './pages/admin/TeamPositionManage';
 import DocumentEdit from './pages/documents/EditPage';
 import Dashboard from './pages/Dashboard';
 import DocumentList from './pages/documents/DocumentList'
-
+import DocumentDetail from './pages/documents/DocumentDetail';
+import ApproveList from './pages/documents/ApprovalList';
 const queryClient = new QueryClient();
 
 function App() {
@@ -27,7 +28,10 @@ function App() {
 
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/document/edit" element={<PrivateRoute><DocumentEdit /></PrivateRoute>} />
+        <Route path="/document/edit/:docId" element={<PrivateRoute><DocumentEdit /></PrivateRoute>} />
+        <Route path="/document/approve/list" element={<PrivateRoute><ApproveList /></PrivateRoute>} />
         <Route path="/document/list" element={<PrivateRoute><DocumentList /></PrivateRoute>} />
+        <Route path="/document/detail/:docId" element={<PrivateRoute><DocumentDetail /></PrivateRoute>} />
     
       </Routes>
     </QueryClientProvider>

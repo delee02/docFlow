@@ -11,5 +11,5 @@ export function restoreDraft(userId) {
     );
 
     // 취소하면 null 반환
-    return confirmRestore ? savedDraft : null;
+    return confirmRestore ? savedDraft : null;  
 }
