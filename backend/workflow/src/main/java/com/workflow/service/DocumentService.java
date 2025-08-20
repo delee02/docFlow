@@ -4,6 +4,7 @@ import com.workflow.DTO.UserDto;
 import com.workflow.DTO.request.ApproverRequest;
 import com.workflow.DTO.request.DocumentRequest;
 import com.workflow.DTO.request.WriterRequest;
+import com.workflow.DTO.response.DocListResponse;
 import com.workflow.DTO.response.DocumentResponse;
 import com.workflow.DTO.response.MyApprovalListResponse;
 import com.workflow.constants.APPROVALSTATUS;
@@ -11,6 +12,7 @@ import com.workflow.constants.DOCUMENTSTATUS;
 import com.workflow.entity.ApprovalLine;
 import com.workflow.entity.Document;
 import com.workflow.entity.User;
+import com.workflow.repository.ApprovalRepository;
 import com.workflow.repository.DocumentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DocumentService {
     private final DocumentRepository documentRepository;
+    private final ApprovalRepository approvalRepository;
     private final RedisTemplate redisTemplate;
 
     //서류 저장
@@ -76,13 +79,13 @@ public class DocumentService {
     }
 
     //서류 전체 리스트
-    public List<DocumentResponse> getAllList(Long userId) {
+    public List<DocListResponse> getAllList(Long userId) {
         List<Document> document = documentRepository.findAllByWriteId(userId);
-        List<DocumentResponse> documentResponses = new ArrayList<>();
+        List<DocListResponse> docListResponses = new ArrayList<>();
         for(Document doc : document){
-            documentResponses.add(entityToResDto(doc));
+            docListResponses.add(entityToListResDto(doc));
         }
-        return documentResponses;
+        return docListResponses;
     }
 
     //상태별로 가져오기
@@ -106,7 +109,23 @@ public class DocumentService {
     }
 
     //나랑 연관되어 있는 서류
-    public MyApprovalListResponse MyApprovalList(Long userId) {
+    public List<DocListResponse> myApprovalList(Long userId) {
+        try {
+            //유저아이디로 approval_line에서 userId가 나고, status가 null이 아닌걸 가져온다. list
+            List<Document> myApprovalList = documentRepository.findAllMyApproval(userId);
+            //가져온 docId로 docList 맞춰 가져감
+            List<DocListResponse> documentList = new ArrayList<>();
+            for(Document doc : myApprovalList){
+                entityToListResDto(doc);
+                documentList.add(entityToListResDto(doc));
+            }
+            System.out.println(documentList);
+            return documentList;
+        }catch (Exception e){
+            System.out.println("서류 가져오기 실패");
+            e.printStackTrace();
+            throw new RuntimeException("서류 조회 실패",e);
+        }
 
     }
 
@@ -134,11 +153,24 @@ public class DocumentService {
             approverRequest.setTeamName(approver.getTeamName());
             approverRequest.setPositionName(approver.getPositionName());
             approverRequest.setApprovalOrder(approver.getApprovalOrder());
+            approverRequest.setStatus(approver.getStatus() != null ? approver.getStatus().name() : "");
             approverRequests.add(approverRequest);
         }
         documentRequest.setApprovers(approverRequests);
 
         return documentRequest;
+    }
+
+    //docList response
+    public DocListResponse entityToListResDto(Document document){
+        DocListResponse docListResponse = new DocListResponse();
+        docListResponse.setId(document.getId());
+        docListResponse.setTitle(document.getTitle());
+        docListResponse.setTemplateType(document.getType());
+        docListResponse.setStatus(document.getStatus());
+        docListResponse.setUserName(document.getWriterName());
+
+        return docListResponse;
     }
     //doc response
     public DocumentResponse entityToResDto(Document document){

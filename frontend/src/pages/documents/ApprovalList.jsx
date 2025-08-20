@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api/api'
 
-const DocumentList = () => {
+
+const ApprovalList = () => {
     const navigate = useNavigate();
     const [approval, setApproval] = useState([]);
     useEffect (() => {
@@ -33,22 +34,24 @@ const DocumentList = () => {
               <th style={styles.th}>no</th>
               <th style={styles.th}>종류</th>
               <th style={styles.th}>제목</th>
+              <th style={styles.th}>기안자</th>
               <th style={styles.th}>진행상황</th>
               <th style={styles.th}></th>
             </tr>
           </thead>
           <tbody>
-            {approval.map((doc,index) => (
-              <tr key={doc.id} style={styles.tr}>
+            {approval.map((app,index) => (
+              <tr key={app.id} style={styles.tr}>
                 <td style={styles.td}>{index +1}</td>
-                <td style={styles.td}>{doc.templateType}-{doc.id}</td>
-                <td style={styles.td}>{doc.title}</td>
-                <td style={styles.td}>{doc.status}</td>
+                <td style={styles.td}>{app.templateType}-{app.id}</td>
+                <td style={styles.td}>{app.title}</td>
+                <td style={styles.td}>{app.userName}</td>
+                <td style={styles.td}>{app.status}</td>
                 
                 <td style={{ padding: '12px' }}>
                   <button
                     style={{ cursor: 'pointer', backgroundColor: '#ffc107', border: 'none', borderRadius: '4px', padding: '4px 8px'}}
-                    onClick={() => handleDocument(doc.id)}
+                    onClick={() => handleDocument(app.id)}
                   >
                     자세히 보기
                   </button>
@@ -120,4 +123,4 @@ addButton: {
 
 
 
-export default DocumentList;
+export default ApprovalList;

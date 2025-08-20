@@ -17,6 +17,7 @@ const LoginPage = () => {
           localStorage.setItem('accessToken', data.token);
           localStorage.setItem('userName', data.name);
           localStorage.setItem('role',data.role);
+          localStorage.setItem('userId',data.userId);
 
           if(data.role === 'ROLE_ADMIN'){
             navigate("/admin/dashboard");

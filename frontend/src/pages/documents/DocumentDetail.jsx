@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import api from "../../api/api";
+import ApprovalModal from "./ApprovalModal";
 
 const STATUS_COLOR = {
   SAVE: "#E0E0E0",
@@ -11,6 +12,8 @@ const STATUS_COLOR = {
 };
 
 const DocumentDetailView = () => {
+  const currentUser = Number(localStorage.getItem('userId'));
+   const [showSearchModal, setShowSearchModal] = useState(false);    
   const { docId } = useParams();
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -33,14 +36,23 @@ const DocumentDetailView = () => {
       
   };
 
+  const handleAddApproval = () => {
+    setShowSearchModal(true);
+  }
   const handleSubmitMyDoc = () => {
     api.post(`/document/submit/${docId}`);
   }
 
+  useEffect(() => {
+    if(form.writer?.id){
+      localStorage.setItem('writer' , form.writer?.id);
+    }
+  },[form]);
+
   const displayApprovers = form.approvers.length > 0
     ? form.approvers
     : [{ positionName: '미지정', name: '', teamName: '', userId: null }];
-
+            
   return (
     <div style={{ display: "flex" }}>
       <Sidebar />
@@ -82,6 +94,8 @@ const DocumentDetailView = () => {
                   ["부서", form.writer?.teamName],
                   ["직책", form.writer?.positionName],
                   ["이름", form.writer?.name],
+                  
+
                 ].map(([label, value], i) => (
                   <tr key={i} style={{ height: 15 }}>
                     <th style={{
@@ -149,37 +163,49 @@ const DocumentDetailView = () => {
                     </td>
                   ))}
                 </tr>
+                <tr style={{ height: 18, fontSize: 11, color: "#000000ff" }}>
+                  {displayApprovers.map(({ status }, idx) => (
+                    <td key={idx} style={{ border: "1px solid #ccc", padding: 0 }}>
+                      {status}상태
+                    </td>
+                  ))}
+                </tr>
               </tbody>
             </table>
           </div>
 
           {/* 본문 */}
           <div style={{ border: "1px solid #ccc", borderRadius: 6, padding: 15, minHeight: 300 }}>
-            <div dangerouslySetInnerHTML={{ __html: form.content || "<p>내용 없음</p>" }} />
+            <div dangerouslySetInnerHTML={{ __html: form.content || "<p>내용 없음</p>" }} readOnly/>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             {/* 작성자인 경우 */}
-            {form.writer?.id  && (
+
+            {form.writer?.id === currentUser  && form.status ==='DRAFT' &&(
                 <button type="button" onClick={() => handleEdit(form)}>
                 수정
                 </button>
             )}
-            {form.writer?.id  && (
+            {form.writer?.id === currentUser && form.status ==='DRAFT' && (
                 <button type="button" onClick={() => handleSubmitMyDoc()}>
                 제출
                 </button>
             )}
 
             {/* 결재자인 경우 (status pending인 경우만) */}
-            {form.approvers.some(
-                (a) => a.status === 'pending'
-            ) && (
-                <button type="button" /*onClick={handleApprove}*/>
-                결재
-                </button>
+            {displayApprovers.some(
+                (a) => a.status === 'PENDING' && a.userId === currentUser
+              ) && (
+                <button type="button" onClick={handleAddApproval}>
+                  결재
+                </button>  
             )}
-
-            {/* 작성자 + 결재자가 아닌 경우에는 버튼 숨김 */}
+            {showSearchModal && (
+              <ApprovalModal
+              onClose={() => setShowSearchModal(false)}
+              />
+            )}
+                          
             </div>
         </div>
       </main>

@@ -13,4 +13,5 @@ public class ApproverRequest {
     private String teamName;
     private String positionName;
     private int approvalOrder;
+    private String status;
 }

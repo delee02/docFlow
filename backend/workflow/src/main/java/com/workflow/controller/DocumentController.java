@@ -1,6 +1,7 @@
 package com.workflow.controller;
 
 import com.workflow.DTO.request.DocumentRequest;
+import com.workflow.DTO.response.DocListResponse;
 import com.workflow.DTO.response.DocumentResponse;
 import com.workflow.DTO.response.MyApprovalListResponse;
 import com.workflow.DTO.response.UserResponseDto;
@@ -87,9 +88,14 @@ public class DocumentController {
                 System.out.println("유저가 다릅니다.");
                 return ResponseEntity.badRequest().body("유저가 다릅니다.");
             }
-            documentService.updateDocument(response);
-            System.out.println("문서 수정 완료");
-            return ResponseEntity.ok("ok");
+            if(response.getStatus().name().equals("DRAFT")) {
+                documentService.updateDocument(response);
+                System.out.println("문서 수정 완료");
+                return ResponseEntity.ok("ok");
+            }else{
+                System.out.println("이미 넘어간 결재는 수정하실 수 없습니다.");
+                return ResponseEntity.badRequest().body("이미 넘어간 결재는 수정하실 수 없습니다.");
+            }
 
         }catch (Exception e) {
             System.out.println("수정 실패");
@@ -100,14 +106,14 @@ public class DocumentController {
 
     //문서 리스트
     @GetMapping("/list")
-    public List<DocumentResponse> list( @RequestParam(required = false) String status, @AuthenticationPrincipal User user) {
+    public List<DocListResponse> list( @RequestParam(required = false) String status, @AuthenticationPrincipal User user) {
         //내가 쓴 문서 다 가져옴
         if (status == null || status.equals("")) {
-            List<DocumentResponse> docs = documentService.getAllList(user.getUserId());
+            List<DocListResponse> docs = documentService.getAllList(user.getUserId());
             System.out.println("문서 리스트 다ㅏ" + docs);
             return docs;
         } else {
-            List<DocumentResponse> docs = documentService.getAllList(user.getUserId());
+            List<DocListResponse> docs = documentService.getAllList(user.getUserId());
             System.out.println("문서 리스트" + docs);
             return docs;
         }
@@ -136,11 +142,12 @@ public class DocumentController {
         }
     }
 
+    //나랑 연관되어있는 결재문서 다 가져오기(pending, approved 다) 서류가 만들어짐 -> 결재자 상태 null 기안자가 저장하면 1이 pending됨)
     @GetMapping("/myApprovalList")
-    public ResponseEntity<MyApprovalListResponse> myApprovalList(@AuthenticationPrincipal User user){
-        //userid가 나 의 approval status가 pending인거
-        MyApprovalListResponse list = documentService.MyApprovalList(user.getUserId());
-
+    public ResponseEntity<List<DocListResponse>> myApprovalList(@AuthenticationPrincipal User user){
+        List<DocListResponse> list = documentService.myApprovalList(user.getUserId());
+        System.out.println("유저아이디는 :"+ user.getUserId());
+        return ResponseEntity.ok(list);
     }
 
 

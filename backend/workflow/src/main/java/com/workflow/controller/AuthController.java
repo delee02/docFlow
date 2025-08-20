@@ -52,7 +52,7 @@ public class AuthController {
                 .orElseThrow(() -> new UsernameNotFoundException("유저 없음"));
         System.out.println("유저 조회 완료: " + user.getName());
 
-        return ResponseEntity.ok(new LoginResponse(token, user.getName(), user.getRole()));
+        return ResponseEntity.ok(new LoginResponse(token, user.getName(), user.getRole(), user.getUserId()));
     }
 
 

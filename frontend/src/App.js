@@ -6,6 +6,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserList from './pages/admin/UserList';
 import PrivateRoute from './components/PrivateRoute';
 import ProtectedRoute from './components/ProtectedRoute'
+import OnlymeRoute from './components/OnlymeRoute'
 import UserForm from './pages/admin/UserForm';
 import TeamAdminList from './pages/admin/TeamPositionManage';
 import DocumentEdit from './pages/documents/EditPage';
@@ -28,7 +29,7 @@ function App() {
 
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/document/edit" element={<PrivateRoute><DocumentEdit /></PrivateRoute>} />
-        <Route path="/document/edit/:docId" element={<PrivateRoute><DocumentEdit /></PrivateRoute>} />
+        <Route path="/document/edit/:docId" element={<PrivateRoute><OnlymeRoute><DocumentEdit /></OnlymeRoute></PrivateRoute>} />
         <Route path="/document/approve/list" element={<PrivateRoute><ApproveList /></PrivateRoute>} />
         <Route path="/document/list" element={<PrivateRoute><DocumentList /></PrivateRoute>} />
         <Route path="/document/detail/:docId" element={<PrivateRoute><DocumentDetail /></PrivateRoute>} />
