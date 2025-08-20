@@ -33,6 +33,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("role", user.getRole().name())
+                .claim("userId", user.getUserId())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)

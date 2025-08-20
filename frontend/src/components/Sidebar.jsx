@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
   const navigate = useNavigate();
-
+  const name = localStorage.getItem('userName');
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('userName');
@@ -15,7 +15,7 @@ const Sidebar = () => {
 
   return (
     <nav style={styles.sidebar}>
-      <h2 style={styles.title}>메뉴</h2>
+      <h2 style={styles.title}>{name}님</h2>
       <ul style={styles.ul}>
          {(role === 'ROLE_ADMIN') && (
           <>
