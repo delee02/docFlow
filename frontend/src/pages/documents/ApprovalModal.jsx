@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import api from '../../api/api'
-const ApprovalModal = ({ users = [], onSelect, onClose }) => {
+const ApprovalModal = ({ userId, docId, onClose }) => {
   const modalRef = useRef(null);
-
+console.log("user: ", userId, "doc:",docId);
   // 모달 밖 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -14,9 +14,19 @@ const ApprovalModal = ({ users = [], onSelect, onClose }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
-  const handleSubmit = () => {
-    api.post('document/nextPending')
-  }
+  const handleApproval = async () => {
+    api.post('approval/approvedDoc', {
+      docId,
+      userId
+    })
+    .then(res => {
+      console.log("승인 완료", res.data);
+    })
+    .catch(err => {
+      console.error("승인 실패", err);
+    });
+  };
+
 
   const modalStyle = {
     position: "fixed",
@@ -63,7 +73,7 @@ const ApprovalModal = ({ users = [], onSelect, onClose }) => {
             outline: "none",
           }}
         />
-        <button type="button" onClick = {() =>{handleSubmit()}}>
+        <button type="button" onClick = {() =>{handleApproval()}}>
             승인
         </button> 
         <button type="button" >

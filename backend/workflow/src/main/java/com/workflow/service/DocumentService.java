@@ -133,6 +133,7 @@ public class DocumentService {
     /// doc req
     public DocumentRequest entityToReqDto(Document document){
         DocumentRequest documentRequest = new DocumentRequest();
+        documentRequest.setDocumentId(document.getId());
         documentRequest.setTitle(document.getTitle());
         documentRequest.setTemplateType(document.getType());
         documentRequest.setContent(document.getContent());

@@ -202,6 +202,8 @@ const DocumentDetailView = () => {
             )}
             {showSearchModal && (
               <ApprovalModal
+               docId = {docId}
+               userId = {currentUser}
               onClose={() => setShowSearchModal(false)}
               />
             )}

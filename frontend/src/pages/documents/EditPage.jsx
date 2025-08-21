@@ -205,6 +205,7 @@ const EditPage = () => {
   const [writer, setWriter] = useState({ team: '-', position: '-', name: '-' });
   const [approvers, setApprovers] = useState([]);
   const { docId } = useParams();
+  const [status, setStatus] =useState([]);
 
 
   // 자동 저장
@@ -216,6 +217,7 @@ const EditPage = () => {
     setTitle(data.title);
     setSelectedTemplateId(data.templateType);
     setApprovers(data.approvers);
+    setStatus(data.status);
     setWriter(data.writer);
     if (editor) editor.commands.setContent(data.content);
     setDraftLoaded(true);

@@ -1,5 +1,6 @@
 package com.workflow.controller;
 
+import com.workflow.DTO.request.ApproveDocRequest;
 import com.workflow.DTO.request.UserListRequest;
 import com.workflow.DTO.response.UserResponseDto;
 import com.workflow.config.JwtUtil;
@@ -42,7 +43,21 @@ public class ApprovalController {
         }
         return ResponseEntity.ok(result);
 
+    }
+    //결재 눌렀을 떄
+    @PostMapping("/approvedDoc")
+    public ResponseEntity<String> approveDocument(@RequestBody ApproveDocRequest approveDocRequest){
+        try {
+            Long userId = approveDocRequest.getUserId();
+            Long documentId = approveDocRequest.getDocId();
+            System.out.println("ㅕ유저아이디" + userId + "서류아이디" + documentId);
 
-
+            approvalService.approveDocument(userId, documentId);
+            return ResponseEntity.ok("approve 성공!");
+        } catch (Exception e) {
+            System.out.println("approved 변경 실패");
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("approved 변갱 실패 ");
+        }
     }
 }
