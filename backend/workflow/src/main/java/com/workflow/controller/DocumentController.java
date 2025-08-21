@@ -123,7 +123,7 @@ public class DocumentController {
     @GetMapping("/detail/{docId}")
     public DocumentRequest docDetail(@PathVariable Long docId) {
         DocumentRequest docs = documentService.getDocDetail(docId);
-        System.out.println("문서 리스트 다ㅏ" + docs);
+        System.out.println(docs.getDocumentId()+"의 문서정보" + docs);
         return docs;
     }
 
@@ -149,6 +149,10 @@ public class DocumentController {
         System.out.println("유저아이디는 :"+ user.getUserId());
         return ResponseEntity.ok(list);
     }
+
+    //승인
+    /*@PostMapping("/approvedDoc")
+    public ResponseEntity<String> approvedDoc ()*/
 
 
 

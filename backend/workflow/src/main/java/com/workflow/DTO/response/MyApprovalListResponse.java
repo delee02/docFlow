@@ -1,6 +1,5 @@
 package com.workflow.DTO.response;
 
-import com.workflow.DTO.request.WriterRequest;
 import com.workflow.constants.DOCUMENTSTATUS;
 import lombok.AllArgsConstructor;
 import lombok.Data;

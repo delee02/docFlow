@@ -14,6 +14,7 @@ import Dashboard from './pages/Dashboard';
 import DocumentList from './pages/documents/DocumentList'
 import DocumentDetail from './pages/documents/DocumentDetail';
 import ApproveList from './pages/documents/ApprovalList';
+import SignatureRegister from './pages/signature/SignatureRegister'
 const queryClient = new QueryClient();
 
 function App() {
@@ -33,7 +34,7 @@ function App() {
         <Route path="/document/approve/list" element={<PrivateRoute><ApproveList /></PrivateRoute>} />
         <Route path="/document/list" element={<PrivateRoute><DocumentList /></PrivateRoute>} />
         <Route path="/document/detail/:docId" element={<PrivateRoute><DocumentDetail /></PrivateRoute>} />
-    
+        <Route path="/signature/register" element={<PrivateRoute><SignatureRegister /></PrivateRoute>} />
       </Routes>
     </QueryClientProvider>
   );

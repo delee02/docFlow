@@ -8,6 +8,7 @@ import { queryClient } from './queryClient';
         title,
         selectedTemplateId,
         writer,
+        status,
         approvers,
         navigate
         }) => {
@@ -17,6 +18,7 @@ import { queryClient } from './queryClient';
             id: docId || null,
             title,
             templateType: selectedTemplateId,
+            status :status,
             writer: {
             id: writer.id,
             name: writer.name,

@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DocumentRequest {
+    private Long documentId;
     private String title;
     private String templateType;
     private String content;
