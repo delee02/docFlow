@@ -42,4 +42,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name="status", nullable = false)
     private USERSTATUS status;
+
+    @Column(name="sign_img_url")
+    private String signImgUrl;
+
 }

@@ -19,10 +19,16 @@ const LoginPage = () => {
           localStorage.setItem('role',data.role);
           localStorage.setItem('userId',data.userId);
 
-          if(data.role === 'ROLE_ADMIN'){
-            navigate("/admin/dashboard");
-          }else {
-            navigate("/dashboard");
+          if(!data.haveSign){
+            navigate("/signature/register")
+            
+          }else{
+            if(data.role === 'ROLE_ADMIN'){
+              navigate("/admin/dashboard");
+            }
+              else{
+                navigate("/dashboard");
+            }
           }
 
           
