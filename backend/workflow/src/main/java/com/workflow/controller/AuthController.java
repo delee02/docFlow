@@ -14,6 +14,7 @@ import com.workflow.repository.PositionRepository;
 import com.workflow.repository.TeamRepository;
 import com.workflow.repository.UserRepository;
 import com.workflow.service.AdminService;
+import com.workflow.service.SignatureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,15 +31,13 @@ import java.util.List;
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final AdminService userService;
     private final UserRepository userRepository;
-    private final TeamRepository teamRepository;
-    private final PositionRepository positionRepository;
-    private final UserMapper userMapper;
+    private final SignatureService signatureService;
 
     //로그인
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request){
+        boolean haveSignature = true;
         System.out.println("로그인 시도: " + request.getEmail());
 
         Authentication authentication = authenticationManager.authenticate(
@@ -52,7 +51,13 @@ public class AuthController {
                 .orElseThrow(() -> new UsernameNotFoundException("유저 없음"));
         System.out.println("유저 조회 완료: " + user.getName());
 
-        return ResponseEntity.ok(new LoginResponse(token, user.getName(), user.getRole(), user.getUserId()));
+        //싸인여부
+        if(user.getSignImgUrl() == null) {
+            haveSignature = false;
+        }
+        //boolean haveSignature = signatureService.haveSignature(user.getUserId());
+        System.out.println("싸인있냐고"+haveSignature);
+        return ResponseEntity.ok(new LoginResponse(token, user.getName(), user.getRole(), user.getUserId(), haveSignature));
     }
 
 

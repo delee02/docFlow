@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import DashboardCards from '../components/DashboardCards';
+import SignatureModal from "./signature/SignatureRegister";
 import api from '../api/api'
 
 const Dashboard = () => {
+  const [showModal, setShowModal] = useState(true);
   const [stats, setStats] = useState({
     totalUsers: 0,
     ongoingDocs: 0,
@@ -26,6 +28,7 @@ const Dashboard = () => {
     <div style={styles.container}>
       <Sidebar />
       <main style={styles.mainContent}>
+        
         <h2>대시보드</h2>
         <DashboardCards stats={stats} />
         {/* 여기에 최근 생성된 결재 문서 목록 등 추가 가능 */}
