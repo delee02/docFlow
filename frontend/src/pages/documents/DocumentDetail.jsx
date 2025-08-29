@@ -51,8 +51,8 @@ const DocumentDetailView = () => {
 
   const displayApprovers = form.approvers.length > 0
     ? form.approvers
-    : [{ positionName: '미지정', name: '', teamName: '', userId: null }];
-            
+    : [{ positionName: '미지정', name: '', teamName: '', userId: null, signUrl: '' }];
+          console.log(form)  
   return (
     <div style={{ display: "flex" }}>
       <Sidebar />
@@ -145,8 +145,18 @@ const DocumentDetailView = () => {
               </thead>
               <tbody>
                 <tr style={{ height: 60, backgroundColor: "#fff" }}>
-                  {displayApprovers.map((_, idx) => (
-                    <td key={idx} style={{ border: "1px solid #ccc" }} />
+                  {displayApprovers.map(( {signUrl,status }, idx) => (
+                    <td key={idx} style={{ border: "1px solid #ccc" }}>
+                      {status === "APPROVED" && signUrl ? (
+                      <img 
+                        src={signUrl} 
+                        alt={`싸인 ${idx + 1}`} 
+                        style={{ height: '40px', objectFit: 'contain' }} 
+                      />
+                    ) : (
+                     ''
+                    )}
+                    </td>
                   ))}
                 </tr>
                 <tr style={{ height: 20 }}>
@@ -192,7 +202,6 @@ const DocumentDetailView = () => {
                 </button>
             )}
 
-            {/* 결재자인 경우 (status pending인 경우만) */}
             {displayApprovers.some(
                 (a) => a.status === 'PENDING' && a.userId === currentUser
               ) && (

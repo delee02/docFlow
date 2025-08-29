@@ -14,4 +14,5 @@ public class ApproverRequest {
     private String positionName;
     private int approvalOrder;
     private String status;
+    private String signUrl;
 }
