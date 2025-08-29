@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import api from '../../api/api';
-import '../../css/Modal.css'; // 모달 스타일용
+import '../../css/Modal.css';
 import { useNavigate } from 'react-router-dom';
 import uploadSignImage from "../../firebase/uploadSignImage";
 
@@ -15,11 +15,14 @@ export default function SignatureModal() {
   const tolerance2 = 50;
 
   const handleSave = () => {
-    if (sigCanvas.current.isEmpty()) return;
+    if (sigCanvas.current.isEmpty()) {
+      alert("싸인이 없습니다.");
+      return;
+    }
 
     const dataURL = sigCanvas.current.toDataURL(); // 이미지
     const vector = sigCanvas.current.toData().flat(); // 좌표 벡터
-    
+
     if (vector.length === 0) {
       alert("좌표가 너무 적습니다. 다시 시도해주세요.");
       return;
@@ -41,7 +44,7 @@ export default function SignatureModal() {
       }
     }
 
-    setSignatures([...signatures, { image: dataURL, vector }]);
+    setSignatures(prev => [...prev, { image: dataURL, vector }]);
     sigCanvas.current.clear();
   };
 
@@ -50,24 +53,28 @@ export default function SignatureModal() {
       alert("평균 계산을 위해 세 번 싸인해주세요.");
       return;
     }
-    const avgVector = calculateAverageVector(signatures.map(s => s.vector));
-    const url = await uploadSignImage(userId, signatures[0].image);
+
+    // 안전하게 첫 번째 싸인 확인
+    const firstSignature = signatures[0];
+    if (!firstSignature || !firstSignature.image) {
+      alert("첫 번째 싸인 이미지가 없습니다.");
+      return;
+    }
+
     try {
+      console.log(firstSignature.image, "이미지");
+      const avgVector = calculateAverageVector(signatures.map(s => s.vector));
+      const url = await uploadSignImage(userId, firstSignature.image); // Firebase 업로드
+
       const role = localStorage.getItem('role');
       await api.post("/signature/register", {
         userId,
-        imgUrl:url
+        imgUrl: url
       });
+
       alert("싸인 등록 완료");
       setSignatures([]);
-      
-      onClose(); // 모달 닫기
-        if(role === 'ROLE_ADMIN' ){
-            navigate("/admin/dashboard");
-        }
-            else{
-            navigate("/dashboard");
-        }
+      onClose();
     } catch (err) {
       console.error(err);
       alert("싸인 등록 실패");
@@ -76,13 +83,12 @@ export default function SignatureModal() {
 
   const onClose = () => {
     const role = localStorage.getItem('role');
-    if(role === 'ROLE_ADMIN'){
-            navigate("/admin/dashboard");
-        }
-            else{
-            navigate("/dashboard");
-        }
-  }
+    if (role === 'ROLE_ADMIN') {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/dashboard");
+    }
+  };
 
   return (
     <div className="modal-backdrop">

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import DashboardCards from '../components/DashboardCards';
-import SignatureModal from "./signature/SignatureRegister";
 import api from '../api/api'
+import ChatSidebar from '../chat/ChatSidebar';
 
 const Dashboard = () => {
-  const [showModal, setShowModal] = useState(true);
   const [stats, setStats] = useState({
     totalUsers: 0,
     ongoingDocs: 0,
@@ -14,8 +13,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     async function fetchStats(){
-      // TODO: API 호출해서 stats 데이터 받아오기
-      // 예시 하드코딩
       setStats({
         totalUsers: 150,
         ongoingDocs: 12,
@@ -34,6 +31,7 @@ const Dashboard = () => {
         {/* 여기에 최근 생성된 결재 문서 목록 등 추가 가능 */}
         <h2>여기는 어디민이 아닙니다요</h2>
       </main>
+      <ChatSidebar/>
     </div>
   );
 };
