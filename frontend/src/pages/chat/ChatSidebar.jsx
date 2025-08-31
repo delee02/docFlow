@@ -1,12 +1,12 @@
 import React, {useEffect, useState, useRef} from "react";
-import api from '../api/api';
+import api from '../../api/api';
 import ChatRoom from "./ChatRoom";
 import './ChatSidebar.css';
 
 export default function ChatSidebar(){
     const [open, setOpen] = useState(false);
     const [rooms, setRooms] = useState([]);
-    const [selectedRoomId, setSelectedRoomId] = useState(null);
+    const [selectedRoom, setSelectedRoom] = useState(null);
     const userId = localStorage.getItem('userId');
 
     useEffect (() => {
@@ -26,14 +26,14 @@ export default function ChatSidebar(){
 
       {/* 슬라이드 패널 */}
       <div className={`chat-sidebar ${open ? 'open' : ''}`}>
-        {!selectedRoomId ? (
+        {!selectedRoom ? (
           <div className="chat-room-list">
             <h3>채팅방 목록</h3>
             {rooms.map(room => (
               <div
                 key={room.id}
                 className="chat-room-item"
-                onClick={() => setSelectedRoomId(room.id)}
+                onClick={() => setSelectedRoom(room)}
               >
                 {room.name}
               </div>
@@ -41,8 +41,8 @@ export default function ChatSidebar(){
           </div>
         ) : (
           <>
-            <button className="back-btn" onClick={() => setSelectedRoomId(null)}>← 목록</button>
-            <ChatRoom roomId={selectedRoomId} currentUserId={userId} />
+            <button className="back-btn" onClick={() => setSelectedRoom(null)}>← 목록</button>
+            <ChatRoom roomId={selectedRoom.id} roomName={selectedRoom.name} _userId={userId} />
           </>
         )}
       </div>

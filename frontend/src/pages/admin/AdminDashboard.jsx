@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import DashboardCards from '../../components/DashboardCards';
 import api from '../../api/api'
-
+import ChatSidebar from '../chat/ChatSidebar';
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -33,6 +33,7 @@ const AdminDashboard = () => {
         <DashboardCards stats={stats} />
         {/* 여기에 최근 생성된 결재 문서 목록 등 추가 가능 */}
       </main>
+      <ChatSidebar/>
     </div>
   );
 };
