@@ -1,15 +1,16 @@
 package com.workflow.controller;
 
+import com.workflow.DTO.request.ChatMessageRequest;
+import com.workflow.DTO.response.ChatMessageResponse;
 import com.workflow.DTO.response.ChatRoomListResponse;
-import com.workflow.DTO.response.ChatRoomResponse;
+
 import com.workflow.entity.ChatMessage;
 import com.workflow.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -30,15 +31,30 @@ public class ChatController {
         }
     }
 
-    //특정 채팅방 정보랑 메세지 가져오기
+    //특정 채팅방 메세지 가져오기
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<ChatMessage>> chatMessages(@RequestParam Long roomId){
+    public ResponseEntity<List<ChatMessageResponse>> chatMessages(@PathVariable Long roomId){
         try {
-            List<ChatMessage> messages = chatService.getChat(roomId);
+            List<ChatMessageResponse> messages = chatService.getChat(roomId);
+            return ResponseEntity.ok(messages);
 
         }catch (Exception e) {
             System.out.println("채팅방 정보들 가져오기 실페");
             return ResponseEntity.badRequest().body(null);
         }
     }
+
+    @PostMapping("/newMessage")
+    public ResponseEntity<String> newMessage(@RequestBody ChatMessageRequest message){
+        try {
+            System.out.println("가져온 메세지정보" + message);
+            chatService.newMessage(message);
+
+            return ResponseEntity.ok("새로운 채팅메세지 추가 성공");
+        }catch (Exception e){
+            System.out.println("새로운 채팅메세지 ㅊ추가 실패");
+            return ResponseEntity.badRequest().body("메세지추가 실패");
+        }
+    }
+
 }

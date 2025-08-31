@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import DashboardCards from '../components/DashboardCards';
 import api from '../api/api'
-import ChatSidebar from '../chat/ChatSidebar';
+import ChatSidebar from './chat/ChatSidebar';
+
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -14,7 +15,6 @@ const Dashboard = () => {
   useEffect(() => {
     async function fetchStats(){
       setStats({
-        totalUsers: 150,
         ongoingDocs: 12,
         pendingApprovals: 4,
       });
