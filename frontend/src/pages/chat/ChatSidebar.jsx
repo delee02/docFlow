@@ -39,7 +39,7 @@ export default function ChatSidebar(){
               </div>
             ))}
           </div>
-        ) : (
+        ) : ( 
           <>
             <button className="back-btn" onClick={() => setSelectedRoom(null)}>← 목록</button>
             <ChatRoom roomId={selectedRoom.id} roomName={selectedRoom.name} _userId={userId} />

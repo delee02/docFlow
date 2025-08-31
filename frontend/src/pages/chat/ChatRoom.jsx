@@ -9,7 +9,7 @@ export default function ChatRoom({ roomId, roomName, _userId }) {
   const userId = Number(_userId);
   useEffect(() => {
     api.get(`chat/room/${roomId}`)
-    .then(res => {
+    .then(res => { 
       setMessages(res.data);
     }).catch(() => console.error("채팅방 정보갖뎌오기 실패"));
   }, [roomId]);
