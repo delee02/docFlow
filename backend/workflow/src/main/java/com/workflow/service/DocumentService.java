@@ -14,6 +14,7 @@ import com.workflow.entity.Document;
 import com.workflow.entity.User;
 import com.workflow.repository.ApprovalRepository;
 import com.workflow.repository.DocumentRepository;
+import com.workflow.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final ApprovalRepository approvalRepository;
     private final RedisTemplate redisTemplate;
+    private final UserRepository userRepository;
 
     //서류 저장
     public void saveDocument(DocumentRequest request) {
@@ -148,6 +150,7 @@ public class DocumentService {
 
         List<ApproverRequest> approverRequests = new ArrayList<>();
         for(ApprovalLine approver : document.getApprovalLines()){
+            User user = userRepository.findById(approver.getUserId()).orElse(null);
             ApproverRequest approverRequest = new ApproverRequest();
             approverRequest.setUserId(approver.getUserId());
             approverRequest.setName(approver.getName());
@@ -155,6 +158,7 @@ public class DocumentService {
             approverRequest.setPositionName(approver.getPositionName());
             approverRequest.setApprovalOrder(approver.getApprovalOrder());
             approverRequest.setStatus(approver.getStatus() != null ? approver.getStatus().name() : "");
+            approverRequest.setSignUrl(user != null ? user.getSignImgUrl() : null);
             approverRequests.add(approverRequest);
         }
         documentRequest.setApprovers(approverRequests);
