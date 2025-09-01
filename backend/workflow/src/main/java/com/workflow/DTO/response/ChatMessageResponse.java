@@ -21,3 +21,4 @@ public class ChatMessageResponse {
     private MESSAGETYPE type;
     private LocalDateTime createdAt;
 }
+

@@ -1,16 +1,20 @@
 package com.workflow.controller;
 
 import com.workflow.DTO.request.ChatMessageRequest;
+
+import com.workflow.DTO.request.NewChatRequest;
 import com.workflow.DTO.response.ChatMessageResponse;
 import com.workflow.DTO.response.ChatRoomListResponse;
+import com.workflow.DTO.response.ChatRoomResponse;
+import com.workflow.DTO.response.NewChatResponse;
 
 import com.workflow.entity.ChatMessage;
+import com.workflow.entity.User;
 import com.workflow.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.List;
 
@@ -20,6 +24,17 @@ import java.util.List;
 public class ChatController {
     private final ChatService chatService;
 
+    //새로운 채팅방 추가하기
+    @PostMapping("/newChat")
+    public ResponseEntity<NewChatResponse> newChat(@RequestBody NewChatRequest newChatRequest, @AuthenticationPrincipal User user){
+        System.out.println("유저 잘ㄷ나오가"+user.getUserId());
+        try {
+            NewChatResponse response = chatService.newChat(newChatRequest, user.getUserId());
+            return ResponseEntity.ok(response);
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
     //채팅방 리스트 가져오기
     @GetMapping("/list")
     public ResponseEntity<List<ChatRoomListResponse>> chatList(@RequestParam Long userId){

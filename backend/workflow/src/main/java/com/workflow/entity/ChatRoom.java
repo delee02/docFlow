@@ -28,4 +28,7 @@ public class ChatRoom {
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatRoomMember> members;
+
+    @Column(unique = true, nullable = true)
+    private String dmKey;
 }
