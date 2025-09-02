@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import api from '../../api/api';
-import '../../css/Modal.css';
+import '../../css/SignatureModal.css';
 import { useNavigate } from 'react-router-dom';
 import uploadSignImage from "../../firebase/uploadSignImage";
 
@@ -96,16 +96,16 @@ export default function SignatureModal() {
         <h3>싸인 등록</h3>
         <SignatureCanvas
           ref={sigCanvas}
-          backgroundColor="white"
-          penColor="black"
-          canvasProps={{ width: 400, height: 200 }}
+          backgroundColor="#fff"
+          penColor="#454f7cff"
+          canvasProps={{ width: 500, height: 250, className: 'sig-canvas' }}
         />
-        <div style={{ marginTop: '10px' }}>
-          <button onClick={handleSave}>저장</button>
-          <button onClick={handleSubmit}>등록</button>
-          <button onClick={onClose}>닫기</button>
+        <div className="button-group">
+          <button className="btn save" onClick={handleSave}>저장</button>
+          <button className="btn submit" onClick={handleSubmit}>등록</button>
+          <button className="btn close" onClick={onClose}>닫기</button>
         </div>
-        <div>현재 저장된 싸인 수: {signatures.length} / 3</div>
+        <div className="sign-count">현재 저장된 싸인 수: {signatures.length} / 3</div>
       </div>
     </div>
   );

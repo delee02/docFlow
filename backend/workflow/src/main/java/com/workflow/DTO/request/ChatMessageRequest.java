@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,5 +16,5 @@ public class ChatMessageRequest {
     private Long senderId;
     private String content;
     private MESSAGETYPE type;
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 }

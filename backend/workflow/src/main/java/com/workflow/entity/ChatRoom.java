@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,8 +25,11 @@ public class ChatRoom {
     private ROOMTYPE type;
 
     private Long createdBy;
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatRoomMember> members;
+
+    @Column(unique = true, nullable = true)
+    private String dmKey;
 }

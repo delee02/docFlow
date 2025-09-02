@@ -1,55 +1,114 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, { useEffect, useState } from "react";
 import api from '../../api/api';
 import ChatRoom from "./ChatRoom";
-import './ChatSidebar.css';
+import '../../css/ChatSidebar.css';
+import SearchModal from './SearchModal';
 
-export default function ChatSidebar(){
-    const [open, setOpen] = useState(false);
-    const [rooms, setRooms] = useState([]);
-    const [selectedRoom, setSelectedRoom] = useState(null);
-    const [newChatModalOpen, setNewModalOpen] = useState(false);
-    const userId = localStorage.getItem('userId');
-    
-    useEffect (() => {
-    if(!open) return;
+const CreateChatModal = ({ onClose, onSelect }) => (
+  <div className="modal-select">
+    <div className="modal-select-content">
+      <h2>새 채팅 만들기</h2>
+      <div className="modal-select-buttons">
+        <button onClick={() => {onSelect("DIRECT"); onClose();}} className="btn dm-btn">Direct Message</button>
+        <button onClick={() => {onSelect("GROUP"); onClose();}} className="btn group-btn">Group Chat</button>
+      </div>
+      <button onClick={onClose} className="select-close-btn">x</button>
+    </div>
+  </div>
+);
+
+export default function ChatSidebar() {
+  const [open, setOpen] = useState(false);
+  const [rooms, setRooms] = useState([]);
+  const [openRooms, setOpenRooms] = useState([]);
+  const [newChatModal, setNewChatModal] = useState(null);
+  const [type, setType] = useState('');
+  const userId = localStorage.getItem('userId');
+
+  useEffect(() => {
+    if (!open) return;
     api.get(`/chat/list?userId=${userId}`)
-    .then(res => setRooms(res.data))
-    .catch(()=> { console.error('채팅 리스트 가져오기 시실패')});
+      .then(res => setRooms(res.data))
+      .catch(() => console.error('채팅 리스트 가져오기 실패'));
+  }, [open, userId]);
 
-    }, [open, userId]);
+  const handleNewChat = async ({ type, users, name }) => {
+    try {
+      const allUsers = Array.from(new Set([...users, userId]));
+      const res = await api.post('chat/newChat', { type, userIds: allUsers, name });
+      setRooms(prev => [...prev, res.data]);
+      setOpenRooms(prev => [...prev, res.data]);
+    } catch (err) {
+      console.error("채팅방 추가 실패", err);
+    }
+  };
 
-    return (
+  const openChatRoom = (room) => {
+    if(!openRooms.find(r => r.id === room.id)) setOpenRooms(prev => [...prev, room]);
+  }
+
+  const closeChatRoom = (roomId) => {
+    setOpenRooms(prev => prev.filter(r => r.id !== roomId));
+  }
+  console.log(rooms);
+  return (
     <>
-      {/* 채팅 토글 버튼 */}
       <button className="chat-toggle-btn" onClick={() => setOpen(!open)}>
         {open ? '×' : '💬'}
       </button>
 
-      {/* 슬라이드 패널 */}
       <div className={`chat-sidebar ${open ? 'open' : ''}`}>
-        {!selectedRoom ? (
-          <div className="chat-room-list">
+        <div className="chat-room-list">
+          <div className="chat-room-header">
             <h3>채팅방 목록</h3>
-            <button>+</button>
-            {rooms.map(room => (
-              <div
-                key={room.id}
-                className="chat-room-item"
-                onClick={() => setSelectedRoom(room)}
-              >
-                {room.name}
-              </div>
-            ))}
+            <button className="open-btn" onClick={() => setNewChatModal("newChat")}>새 채팅</button>
           </div>
-        ) : ( 
+
+          {newChatModal === "newChat" && (
+            <CreateChatModal onClose={() => setNewChatModal(null)} onSelect={setType}/>
+          )}
+
+          {type !== "" && (
+            <SearchModal type={type} onClose={() => setType("")} handleNewChat={handleNewChat}/>
+          )}
+
+          <div className="chat-list">
+            {rooms
+              .slice() // 원본 배열 건드리지 않기 위해 복사
+              .sort((a, b) => new Date(b.time) - new Date(a.time)) // 최신 메시지 먼저
+              .map(room => (
+                <div key={room.id} className="chat-room-item" onClick={() => openChatRoom(room)}>
+                  <div className="room-info">
+                    <span className="room-name">{room.name}</span>
+                    <span className="last-message">{room.content}</span>
+                  </div>
+                  <div className="room-right">
+                  <span className="time">
+                    {new Date(room.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: "Asia/Seoul" })}
+                  </span>
+                  {room.unReadMessage > 0 && (
+                    <span className="unread-badge">{room.unReadMessage}</span>
+                  )}
+                  </div>
+                </div>
+              ))}
+          </div>
+        ) : (
           <>
             <button className="back-btn" onClick={() => setSelectedRoom(null)}>← 목록</button>
             <ChatRoom roomId={selectedRoom.id} roomName={selectedRoom.name} _userId={userId} />
           </>
         )}
       </div>
+
+      {openRooms.map((room, idx) => (
+        <div key={room.id} className="chatroom-modal-backdrop" style={{ right: `${idx * 420 + 10}px` }}>
+          <div className="chatroom-modal-content">
+            <button className="chatroom-close-btn" onClick={() => closeChatRoom(room.id)}>×</button>
+            <ChatRoom roomId={room.id} roomName={room.name} _userId={userId} />
+          </div>
+        </div>
+      ))}
     </>
   );
-
-
 }

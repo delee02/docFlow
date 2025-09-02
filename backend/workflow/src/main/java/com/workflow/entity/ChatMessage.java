@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,5 +31,6 @@ public class ChatMessage {
     @Enumerated(EnumType.STRING)
     private MESSAGETYPE type;
 
-    private LocalDateTime createdAt;
+    private Instant createdAt;
+
 }

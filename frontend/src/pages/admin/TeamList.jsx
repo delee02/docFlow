@@ -86,7 +86,7 @@ const styles = {
   marginBottom: '20px',
 },
 addButton: {
-  backgroundColor: '#28a745',
+  backgroundColor: '#454f7cff',
   color: 'white',
   border: 'none',
   padding: '8px 16px',
@@ -112,7 +112,7 @@ addButton: {
   th: {
     textAlign: 'left',
     padding: '12px',
-    backgroundColor: '#007bff',
+    backgroundColor: '#454f7cff',
     color: 'white',
     fontWeight: 'bold',
     borderBottom: '2px solid #dee2e6',
