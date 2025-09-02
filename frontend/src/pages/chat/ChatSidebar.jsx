@@ -7,8 +7,9 @@ export default function ChatSidebar(){
     const [open, setOpen] = useState(false);
     const [rooms, setRooms] = useState([]);
     const [selectedRoom, setSelectedRoom] = useState(null);
+    const [newChatModalOpen, setNewModalOpen] = useState(false);
     const userId = localStorage.getItem('userId');
-
+    
     useEffect (() => {
     if(!open) return;
     api.get(`/chat/list?userId=${userId}`)
@@ -29,6 +30,7 @@ export default function ChatSidebar(){
         {!selectedRoom ? (
           <div className="chat-room-list">
             <h3>채팅방 목록</h3>
+            <button>+</button>
             {rooms.map(room => (
               <div
                 key={room.id}

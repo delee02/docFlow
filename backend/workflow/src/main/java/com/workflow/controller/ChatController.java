@@ -6,6 +6,7 @@ import com.workflow.DTO.response.ChatRoomListResponse;
 
 import com.workflow.entity.ChatMessage;
 import com.workflow.service.ChatService;
+import com.workflow.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping("/chat")
 @RequiredArgsConstructor
 public class ChatController {
+    private final UserService userService;
     private final ChatService chatService;
 
     //채팅방 리스트 가져오기
