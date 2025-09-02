@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api/api';
-import '../../css/Modal.css'
+import '../../css/AdminModal.css'
 const TeamModal = ({isOpen, onClose, onTeamAdded, editTeam}) => {
     const [teamName , setTeamName] = useState('');
 

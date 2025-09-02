@@ -1,24 +1,26 @@
 form {
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 24px;
+  max-width: 800px;   /* 👉 기존보다 넓게 */
+  width: 100%;    
+  margin: 60px auto;
+  padding: 32px 28px;
   background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 form h2 {
   margin-bottom: 24px;
   font-weight: 600;
-  color: #333;
+  font-size: 22px;
+  color: #454f7cff;
   text-align: center;
 }
 
 form label {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   font-size: 14px;
   color: #555;
 }
@@ -27,28 +29,27 @@ form input[type="text"],
 form input[type="email"],
 form input[type="password"],
 form select {
-  margin-top: 6px;
-  padding: 10px 12px;
+  margin-top: 1px;
+  padding: 12px 14px;
   font-size: 16px;
   border: 1.5px solid #ccc;
-  border-radius: 4px;
-  transition: border-color 0.2s ease-in-out;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
 }
 
-form input[type="text"]:focus,
-form input[type="email"]:focus,
-form input[type="password"]:focus,
+form input:focus,
 form select:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #454f7cff;
+  box-shadow: 0 0 6px rgba(69,79,124,0.25);
 }
 
 form button {
   width: 100%;
-  padding: 12px 0;
-  background-color: #007bff;
+  padding: 14px 0;
+  background-color: #454f7cff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   color: white;
   font-size: 16px;
   cursor: pointer;
@@ -57,5 +58,5 @@ form button {
 }
 
 form button:hover {
-  background-color: #0056b3;
+  background-color: #373f6b;
 }

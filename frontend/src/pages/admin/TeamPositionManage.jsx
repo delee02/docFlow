@@ -86,8 +86,8 @@ const styles = {
     },
     activeTabButton: {
         fontWeight: 'bold',
-        borderBottom: '3px solid #1890ff',
-        color: '#1890ff',
+        borderBottom: '3px solid #454f7cff',
+        color: '#454f7cff',
     },
 };
 

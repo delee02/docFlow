@@ -1,0 +1,74 @@
+/* 전체 화면 가운데 정렬 */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+}
+
+/* 카드 스타일 */
+.login-card {
+  background-color: #fff;
+  padding: 40px 35px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  width: 380px;
+  max-width: 90%;
+  text-align: center;
+  box-sizing: border-box;
+  overflow: hidden; /* form이 튀어나오는 문제 방지 */
+}
+
+/* 제목 */
+.login-title {
+  margin-bottom: 25px;
+  font-size: 22px;
+  color: #454f7cff;
+  font-weight: bold;
+}
+
+/* form 내부 */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* margin 대신 gap 사용 */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* input 공통 */
+.login-form input {
+  padding: 12px;
+  font-size: 16px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: 0.3s;
+}
+
+/* focus 시 */
+.login-form input:focus {
+  border-color: #454f7cff;
+  box-shadow: 0 0 5px #30385aff;
+}
+
+/* 버튼 */
+.login-form button {
+  padding: 12px;
+  background-color: #454f7cff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* 버튼 hover */
+.login-form button:hover {
+  background-color: rgb(42, 50, 83);
+}

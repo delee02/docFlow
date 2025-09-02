@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api/api';
 import '../../css/UserForm.css';
+import { Color } from '@tiptap/extension-text-style';
 
 const roles = ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_MANAGER'];
 const statuses = ['ACTIVE', 'INACTIVE', 'PENDING'];
