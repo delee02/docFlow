@@ -3,6 +3,7 @@ import api from '../../api/api';
 import ChatRoom from "./ChatRoom";
 import '../../css/ChatSidebar.css';
 import SearchModal from './SearchModal';
+import { useChatSocket } from "../../hooks/useChatSocket";
 
 const CreateChatModal = ({ onClose, onSelect }) => (
   <div className="modal-select">

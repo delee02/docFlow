@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login").permitAll()
+                        .requestMatchers("/ws-chat/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")  // 관리자 권한 필터링 추가
                         .anyRequest().authenticated()
                 )
