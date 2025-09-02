@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import api from "../../api/api";
-import './ChatRoom.css';
+import '../../css/ChatRoom.css';
 
 export default function ChatRoom({ roomId, roomName, _userId }) {
   const [messages, setMessages] = useState([]);
@@ -38,7 +38,6 @@ export default function ChatRoom({ roomId, roomName, _userId }) {
         senderId: userId,
         content: newMsg.content,
         type: newMsg.type,
-        createdAt: newMsg.createdAt
       });
     } catch (err) {
       console.error(err);
@@ -51,7 +50,7 @@ export default function ChatRoom({ roomId, roomName, _userId }) {
       <div className="chat-header">{roomName}</div>
 
       <div className="chat-messages">
-        {messages.map(msg => {
+        {messages.map((msg, index) => {
           if (msg.type === "SYSTEM") {
             return (
               <div key={msg.id} className="message system-message">
@@ -61,12 +60,15 @@ export default function ChatRoom({ roomId, roomName, _userId }) {
           }
 
           const isMine = msg.senderId === userId;
+          const prevMsg = messages[index - 1];
+          const showName = !isMine && (!prevMsg || prevMsg.senderId !== msg.senderId);
 
           return (
             <div key={msg.id} className={`message normal-message ${isMine ? "mine" : "other"}`}>
+              {showName && <div className="message-header"><span className="sender-name">{msg.senderName}</span></div>}
               <div className="message-bubble">{msg.content}</div>
               <span className="message-time">
-                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' , timeZone: "Asia/Seoul"})}
               </span>
             </div>
           );

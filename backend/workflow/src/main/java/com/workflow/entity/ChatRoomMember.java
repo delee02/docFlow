@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +22,11 @@ public class ChatRoomMember {
     @JoinColumn(name= "room_id")
     private ChatRoom room;
 
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user; // 지금 userId 대신 User 객체
+
 
     private LocalDateTime joinedAt;
+
 }

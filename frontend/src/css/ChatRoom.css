@@ -47,7 +47,7 @@
 }
 
 .normal-message.mine .message-bubble {
-  background-color: #1a8310;
+  background-color: #606da8ff;
   color: white;
   border-bottom-right-radius: 0;
 }
@@ -97,7 +97,7 @@
 .chat-input button {
   padding: 0 16px;
   border: none;
-  background: #1a8310;
+  background: #606da8ff;
   color: white;
   border-radius: 0 20px 20px 0;
   cursor: pointer;
@@ -105,5 +105,5 @@
 }
 
 .chat-input button:hover {
-  background: #135f0c;
+  background: #454f7cff;
 }

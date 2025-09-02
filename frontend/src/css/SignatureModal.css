@@ -1,0 +1,92 @@
+/* 배경 어둡게 */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* 모달 카드 */
+.modal-content {
+  background-color: #fff;
+  padding: 32px 28px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.modal-content h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #454f7cff;
+  margin-bottom: 20px;
+}
+
+/* 싸인 캔버스 */
+.sig-canvas {
+  display: block;          /* block으로 만들어서 중앙 정렬 가능 */
+  margin: 0 auto;          /* 좌우 중앙 */
+  border: 2px solid #454f7cff;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+/* 버튼 그룹 */
+.button-group {
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.btn {
+  padding: 10px 20px;
+  margin : 5px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* 버튼 색상 */
+.btn.save {
+  background-color: #ffc107;
+  color: #fff;
+}
+
+.btn.save:hover {
+  background-color: #e0a800;
+}
+
+.btn.submit {
+  background-color: #454f7cff;
+  color: #fff;
+}
+
+.btn.submit:hover {
+  background-color: #373f6b;
+}
+
+.btn.close {
+  background-color: #ccc;
+  color: #333;
+}
+
+.btn.close:hover {
+  background-color: #999;
+}
+
+/* 싸인 개수 표시 */
+.sign-count {
+  font-size: 14px;
+  color: #555;
+  margin-top: 8px;
+}

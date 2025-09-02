@@ -7,6 +7,7 @@ import com.workflow.DTO.response.ChatRoomListResponse;
 import com.workflow.DTO.response.ChatRoomResponse;
 import com.workflow.DTO.response.NewChatResponse;
 import com.workflow.entity.ChatMessage;
+import com.workflow.entity.ChatRoomMember;
 import com.workflow.entity.User;
 import com.workflow.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -40,15 +41,17 @@ public class ChatController {
             return ResponseEntity.ok(chatService.getChatList(userId));
         }catch (Exception e) {
             System.out.println("채팅목록 불러오기 실패");
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(null);
         }
     }
 
+
     //특정 채팅방 정보랑 메세지 가져오기
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<ChatMessageResponse>> chatMessages(@PathVariable Long roomId){
+    public ResponseEntity<List<ChatMessageResponse>> chatMessages(@PathVariable Long roomId, @AuthenticationPrincipal User user){
         try {
-            List<ChatMessageResponse> messages = chatService.getChat(roomId);
+            List<ChatMessageResponse> messages = chatService.getChat(roomId ,user.getUserId());
             return ResponseEntity.ok(messages);
 
         }catch (Exception e) {
@@ -57,6 +60,7 @@ public class ChatController {
         }
     }
 
+    //새로운 메세지 db추가
     @PostMapping("/newMessage")
     public ResponseEntity<String> newMessage(@RequestBody ChatMessageRequest message){
         try {
@@ -66,7 +70,9 @@ public class ChatController {
             return ResponseEntity.ok("새로운 채팅메세지 추가 성공");
         }catch (Exception e){
             System.out.println("새로운 채팅메세지 ㅊ추가 실패");
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("메세지추가 실패");
         }
     }
+
 }

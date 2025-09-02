@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-
+import ChatSidebar from '../pages/chat/ChatSidebar';
 const Sidebar = () => {
   const navigate = useNavigate();
   const name = localStorage.getItem('userName');
@@ -29,10 +29,12 @@ const Sidebar = () => {
         <li><NavLink to="/document/list" style={styles.link} activeStyle={styles.active}>내 기안 문서</NavLink></li>
         <li><NavLink to="/document/approve/list" style={styles.link} activeStyle={styles.active}>내 결재 문서</NavLink></li>
         <li><NavLink to="/document/edit" style={styles.link} activeStyle={styles.active}>문서 작성</NavLink></li>
+        
       </ul>
       
 
       <div style={styles.logoutContainer}>
+        <ChatSidebar/>
         <button onClick={handleLogout} style={styles.logoutButton}>로그아웃</button>
       </div>
     </nav>
@@ -43,13 +45,14 @@ const styles = {
   sidebar: {
     width: '220px',
     height: '100vh',
-    backgroundColor: '#454f7cff',
+    backgroundColor: '#606da8ff',
     color: 'white',
     padding: '20px',
     boxSizing: 'border-box',
   },
   title: {
     marginBottom: '30px',
+    color: 'white',
   },
   ul: {
     listStyle: 'none',
@@ -71,7 +74,7 @@ const styles = {
   logoutButton: {
     width: '100%',
     padding: '10px',
-    backgroundColor: '#dc3545',
+    backgroundColor: '#454f7cff',
     color: 'white',
     border: 'none',
     cursor: 'pointer',

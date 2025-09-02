@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api/api';
-import '../../css/Modal.css'
+import '../../css/AdminModal.css'
 const PositionModal = ({isOpen, onClose, onPositionAdded, editPosition}) => {
     const [positionName , setPositionName] = useState('');
     const [level , setLevel] = useState('');
