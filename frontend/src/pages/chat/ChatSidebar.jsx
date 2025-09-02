@@ -3,6 +3,7 @@ import api from '../../api/api';
 import ChatRoom from "./ChatRoom";
 import '../../css/ChatSidebar.css';
 import SearchModal from './SearchModal';
+import { useChatSocket } from "../../hooks/useChatSocket";
 
 const CreateChatModal = ({ onClose, onSelect }) => (
   <div className="modal-select">
@@ -93,12 +94,7 @@ export default function ChatSidebar() {
                 </div>
               ))}
           </div>
-        ) : (
-          <>
-            <button className="back-btn" onClick={() => setSelectedRoom(null)}>← 목록</button>
-            <ChatRoom roomId={selectedRoom.id} roomName={selectedRoom.name} _userId={userId} />
-          </>
-        )}
+        </div>
       </div>
 
       {openRooms.map((room, idx) => (

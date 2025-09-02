@@ -11,7 +11,6 @@ import java.util.Optional;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
     List<ChatMessage> findAllByRoom_Id(Long roomId);
-}
 
     //채팅방 최근 메세지 가져오기
     @Query("SELECT m FROM ChatMessage m " +
