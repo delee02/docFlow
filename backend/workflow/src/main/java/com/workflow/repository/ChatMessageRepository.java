@@ -29,3 +29,4 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     """)
     List<ChatMessageResponse> findAllWithSenderNameByRoomId(@Param("roomId") Long roomId);
 }
+

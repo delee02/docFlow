@@ -1,11 +1,13 @@
 package com.workflow.controller;
 
 import com.workflow.DTO.request.ChatMessageRequest;
+
 import com.workflow.DTO.request.NewChatRequest;
 import com.workflow.DTO.response.ChatMessageResponse;
 import com.workflow.DTO.response.ChatRoomListResponse;
 import com.workflow.DTO.response.ChatRoomResponse;
 import com.workflow.DTO.response.NewChatResponse;
+
 import com.workflow.entity.ChatMessage;
 import com.workflow.entity.ChatRoomMember;
 import com.workflow.entity.User;
@@ -47,7 +49,8 @@ public class ChatController {
     }
 
 
-    //특정 채팅방 정보랑 메세지 가져오기
+
+    //특정 채팅방 메세지 가져오기
     @GetMapping("/room/{roomId}")
     public ResponseEntity<List<ChatMessageResponse>> chatMessages(@PathVariable Long roomId, @AuthenticationPrincipal User user){
         try {

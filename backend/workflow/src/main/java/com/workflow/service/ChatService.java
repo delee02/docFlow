@@ -1,5 +1,6 @@
 package com.workflow.service;
 
+
 import com.workflow.DTO.request.ChatMessageRequest;
 import com.workflow.DTO.request.NewChatRequest;
 import com.workflow.DTO.response.ChatMessageResponse;
@@ -7,6 +8,7 @@ import com.workflow.DTO.response.ChatRoomListResponse;
 import com.workflow.DTO.response.ChatRoomResponse;
 import com.workflow.DTO.response.NewChatResponse;
 import com.workflow.constants.ROOMTYPE;
+
 import com.workflow.entity.ChatMessage;
 import com.workflow.entity.ChatRoom;
 import com.workflow.entity.ChatRoomMember;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -100,9 +103,11 @@ public class ChatService {
         return chats;
     }
 
+
     //새로운 메세지 추가
     public void newMessage(ChatMessageRequest message) {
         ChatRoom chatRoom = chatRepository.findById(message.getRoomId()).orElseThrow(() -> new IllegalArgumentException("요효하지 않은 메세지"));
+
         ChatMessage newMsg = new ChatMessage();
         newMsg.setRoom(chatRoom);
         newMsg.setSenderId(message.getSenderId());
@@ -114,6 +119,7 @@ public class ChatService {
         //안읽음 redis 추가
         incrementUnread(message.getRoomId(), message.getSenderId());
     }
+
 
     //새로운 채팅방 추가
     public NewChatResponse newChat(NewChatRequest newChatRequest, Long userId) {
