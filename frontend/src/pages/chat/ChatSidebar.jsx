@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext  } from "react";
 import api from '../../api/api';
 import ChatRoom from "./ChatRoom";
 import '../../css/ChatSidebar.css';
 import SearchModal from './SearchModal';
-import { useChatSocket } from "../../hooks/useChatSocket";
+import { useChat } from "../../components/ChatProvider";
 
 const CreateChatModal = ({ onClose, onSelect }) => (
   <div className="modal-select">
@@ -19,19 +19,15 @@ const CreateChatModal = ({ onClose, onSelect }) => (
 );
 
 export default function ChatSidebar() {
+  const { rooms, setRooms } = useChat();
   const [open, setOpen] = useState(false);
-  const [rooms, setRooms] = useState([]);
   const [openRooms, setOpenRooms] = useState([]);
   const [newChatModal, setNewChatModal] = useState(null);
   const [type, setType] = useState('');
   const userId = localStorage.getItem('userId');
-
-  useEffect(() => {
-    if (!open) return;
-    api.get(`/chat/list?userId=${userId}`)
-      .then(res => setRooms(res.data))
-      .catch(() => console.error('채팅 리스트 가져오기 실패'));
-  }, [open, userId]);
+  const userName = localStorage.getItem('userName');
+  const [currentRoomId, setCurrentRoomId] = useState(null);
+  const { totalUnread } = useChat();
 
   const handleNewChat = async ({ type, users, name }) => {
     try {
@@ -46,18 +42,32 @@ export default function ChatSidebar() {
 
   const openChatRoom = (room) => {
     if(!openRooms.find(r => r.id === room.id)) setOpenRooms(prev => [...prev, room]);
+    setRooms(prev =>
+    prev.map(r =>
+      r.id === room.id
+        ? { ...r, unReadMessage: 0 }
+        : r
+    )
+  );
+  setCurrentRoomId(room.id);
   }
 
   const closeChatRoom = (roomId) => {
     setOpenRooms(prev => prev.filter(r => r.id !== roomId));
+    if (currentRoomId === roomId) setCurrentRoomId(null);
   }
-  console.log(rooms);
   return (
     <>
-      <button className="chat-toggle-btn" onClick={() => setOpen(!open)}>
+    <button className="chat-toggle-btn" onClick={() => setOpen(!open)}>
         {open ? '×' : '💬'}
+        
       </button>
+      {/* 💬일 때만 뱃지 */}
+      {!open && totalUnread > 0 && (
+        <span className="total-unread-badge">{totalUnread}</span>
+      )}
 
+      
       <div className={`chat-sidebar ${open ? 'open' : ''}`}>
         <div className="chat-room-list">
           <div className="chat-room-header">
@@ -74,7 +84,7 @@ export default function ChatSidebar() {
           )}
 
           <div className="chat-list">
-            {rooms
+            {Array.isArray(rooms) && rooms
               .slice() // 원본 배열 건드리지 않기 위해 복사
               .sort((a, b) => new Date(b.time) - new Date(a.time)) // 최신 메시지 먼저
               .map(room => (
@@ -85,7 +95,11 @@ export default function ChatSidebar() {
                   </div>
                   <div className="room-right">
                   <span className="time">
-                    {new Date(room.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: "Asia/Seoul" })}
+                    {new Date(room.time || Date.now()).toLocaleTimeString([], { 
+                        hour: '2-digit', 
+                        minute: '2-digit', 
+                        timeZone: "Asia/Seoul" 
+                    })}
                   </span>
                   {room.unReadMessage > 0 && (
                     <span className="unread-badge">{room.unReadMessage}</span>
@@ -101,7 +115,7 @@ export default function ChatSidebar() {
         <div key={room.id} className="chatroom-modal-backdrop" style={{ right: `${idx * 420 + 10}px` }}>
           <div className="chatroom-modal-content">
             <button className="chatroom-close-btn" onClick={() => closeChatRoom(room.id)}>×</button>
-            <ChatRoom roomId={room.id} roomName={room.name} _userId={userId} />
+            <ChatRoom roomId={room.id} roomName={room.name} _userId={userId} _userName={userName} />
           </div>
         </div>
       ))}

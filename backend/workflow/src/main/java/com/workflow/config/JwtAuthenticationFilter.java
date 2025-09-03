@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = parseToken(request);
         String path = request.getRequestURI();
 
-        if ("/login".equals(path)) {
+        if (path.startsWith("/ws-chat") ||"/login".equals(path)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -45,11 +45,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     user, null, List.of(new SimpleGrantedAuthority(role))
             );
             SecurityContextHolder.getContext().setAuthentication(auth);
-        }else{
+        }/*else{
             response.setStatus((HttpServletResponse.SC_UNAUTHORIZED));
             response.getWriter().write("Invalid or expired token");
             return;
-        }
+        }*/
 
         filterChain.doFilter(request, response);
     }
