@@ -2,20 +2,20 @@
   import api from "../../api/api";
   import '../../css/ChatRoom.css';
   import { useChatSocket } from "../../hooks/useChatSocket";
-  export default function ChatRoom({ roomId, roomName, _userId, currentRoomId}) {
+  import { useChat } from "../../components/ChatProvider";
+
+  export default function ChatRoom({ roomId, roomName, _userId, _userName, currentRoomId}) {
     const [messages, setMessages] = useState([]);
     const [inputValue, setInputValue] = useState("");
     const [unreadCount, setUnreadCount] = useState("");
     const messagesEndRef = useRef(null);
+    const { setCurrentRoomId } = useChat();
     const userId = Number(_userId);
     
     //websocket 연결
     const { sendMessageWebsocket } = useChatSocket(roomId, (msg) => {
-      setMessages(prev => [...prev, msg]);
-
       if(roomId !== currentRoomId){
         setUnreadCount(prev => prev +1);
-        alert(`새 메세지: ${msg.content}`);
       }
     });
     
@@ -55,12 +55,18 @@
         });
 
         //websocket 전송
-        sendMessageWebsocket(newMsg.content, userId);
+        sendMessageWebsocket(newMsg.content, userId, _userName);
       } catch (err) {
         console.error(err);
         alert("메시지 전송 실패");
       }
     };
+
+    useEffect(() => {
+      setCurrentRoomId(roomId); // 방 들어갈 때 현재 방으로 설정
+      return () => setCurrentRoomId(null); // 방 나갈 때 초기화
+    }, [roomId, setCurrentRoomId]);
+
 
     return (
       <div className="chat-room-container">
@@ -68,6 +74,7 @@
 
         <div className="chat-messages">
           {messages.map((msg, index) => {
+            console.log("Rendering msg:", msg); 
             if (msg.type === "SYSTEM") {
               return (
                 <div key={msg.id} className="message system-message">

@@ -94,10 +94,15 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- redis cloud 추가-->
+        <!-- redis 추가-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!--websocket-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
     </dependencies>
 

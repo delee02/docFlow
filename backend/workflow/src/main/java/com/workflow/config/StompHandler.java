@@ -20,7 +20,7 @@ public class StompHandler implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-
+        System.out.println("STOMP command: " + accessor.getCommand());
         // STOMP CONNECT 요청일 때
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String token = accessor.getFirstNativeHeader("Authorization");
@@ -30,7 +30,8 @@ public class StompHandler implements ChannelInterceptor {
             }
 
             if (!jwtUtil.validateToken(token)) {
-                throw new IllegalArgumentException("Invalid JWT token");
+                System.out.println("Invalid JWT token, ignoring connection");
+                return message;
             }
         }
 
