@@ -56,14 +56,16 @@ export const useChatSocket = (roomId, onMessageReceived) => {
   }, [roomId]); // roomId가 바뀔 때만 연결 재시도
 
 
-  const sendMessageWebsocket = useCallback((content, sender, senderName) => {
+  const sendMessageWebsocket = useCallback((id ,content, sender, senderName) => {
     if (!clientRef.current || !clientRef.current.connected) return;
 
     const message = {
+      id,
       roomId,
       senderId :sender,
       senderName : senderName,
       content,
+      type: 'NORMAL',
       createdAt: new Date().toISOString(),
     };
     console.log("메세지", message)

@@ -21,6 +21,7 @@ public class ApprovalController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
+    //해당 서류 결재자 가져오기 내 바로 위 상관과 팀장
     @GetMapping("/flowUser")
     public ResponseEntity<List<UserListRequest>>getFlowByDocument(@RequestParam String levels, @RequestHeader("Authorization") String authorizationHeader){
         List<UserListRequest> result = new ArrayList<>();
@@ -32,10 +33,6 @@ public class ApprovalController {
             UserResponseDto userDto = userService.getMe(email);
 
             Long level = approvalService.getLevel(userDto.getEmail()).getPosition().getLevel();
-          /*  List<Long> levelList = Arrays.stream(levels.split(","))
-                    .map(Long::parseLong)
-                    .collect(Collectors.toList());*/
-
             result = approvalService.getFlowByDoc(userDto.getTeamId(), (level-1));
             System.out.println("결과는 "+result);
         } else {

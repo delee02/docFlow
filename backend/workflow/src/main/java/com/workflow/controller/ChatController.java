@@ -8,6 +8,7 @@ import com.workflow.DTO.response.ChatRoomListResponse;
 import com.workflow.DTO.response.ChatRoomResponse;
 import com.workflow.DTO.response.NewChatResponse;
 
+import com.workflow.constants.ROOMTYPE;
 import com.workflow.entity.ChatMessage;
 import com.workflow.entity.ChatRoomMember;
 import com.workflow.entity.User;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -50,8 +52,6 @@ public class ChatController {
         }
     }
 
-
-
     //특정 채팅방 메세지 가져오기
     @GetMapping("/room/{roomId}")
     public ResponseEntity<List<ChatMessageResponse>> chatMessages(@PathVariable Long roomId, @AuthenticationPrincipal User user){
@@ -79,5 +79,7 @@ public class ChatController {
             return ResponseEntity.badRequest().body("메세지추가 실패");
         }
     }
+
+
 
 }

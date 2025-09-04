@@ -7,6 +7,7 @@ import com.workflow.DTO.response.ChatMessageResponse;
 import com.workflow.DTO.response.ChatRoomListResponse;
 import com.workflow.DTO.response.ChatRoomResponse;
 import com.workflow.DTO.response.NewChatResponse;
+import com.workflow.constants.MESSAGETYPE;
 import com.workflow.constants.ROOMTYPE;
 
 import com.workflow.entity.ChatMessage;
@@ -40,7 +41,7 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
 
-
+    //채팅방 리스트 가져오기
     public List<ChatRoomListResponse> getChatList(Long userId){
         List<ChatRoomMember> chatRoomList = chatRoomMemberRepository.findAllByUser_UserId(userId);
 
@@ -169,6 +170,47 @@ public class ChatService {
 
         return newChatResponse;
     }
+    //서버메세지 받기 위한 함수
+    public void sendDocflowMessage(Long userId, Long documentId){
+        NewChatRequest docChat = new NewChatRequest();
+        List<Long> users = new ArrayList<>();
+        users.add(0L);
+        users.add(userId);
+        docChat.setType(ROOMTYPE.DIRECT);
+        docChat.setName("DocFlow");
+        docChat.setUserIds(users);
+        //채팅방 없으면 만듦(채팅방 없으면 만들고 있으면 이어서 대화하는 로직 짜놓음)
+        NewChatResponse returnChat = newChat(docChat, userId);
+
+        //새채팅 메세지 추가
+        ChatMessageRequest message = new ChatMessageRequest();
+        message.setRoomId(returnChat.getId());
+        message.setSenderId(0L);
+        message.setType(MESSAGETYPE.SYSTEM);
+        message.setContent();
+
+        //웹소켓 보내기
+        ChatMessageResponse msg = new ChatMessageResponse();
+        msg.set
+
+
+
+        }
+    private Long roomId;
+    private Long senderId;
+    private String content;
+    private MESSAGETYPE type;
+    private Instant createdAt;
+
+
+    private Long id;
+    private Long roomId;
+    private Long senderId;
+    private String senderName;
+    private String content;
+    private MESSAGETYPE type;
+    private Instant createdAt;
+
 
     //안읽은 메세지 추가를 위해
     public void incrementUnread(Long roomId, Long senderId){

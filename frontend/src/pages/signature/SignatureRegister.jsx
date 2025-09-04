@@ -36,8 +36,8 @@ export default function SignatureModal() {
         alert("첫 번째 싸인과 좌표 수가 너무 다릅니다. 다시 입력해주세요.");
         sigCanvas.current.clear();
         return;
-      }
-      if (!isSimilarVector(baseVector, vector, tolerance2)) {
+        }
+        if (!isSimilarVector(baseVector, vector, tolerance2)) {
         alert("첫 번째 싸인과 형태가 너무 다릅니다. 다시 입력해주세요.");
         sigCanvas.current.clear();
         return;

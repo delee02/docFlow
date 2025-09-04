@@ -17,7 +17,7 @@ export function useDocumentAutoSave({documentId, writer, title, templateType, ap
                 updatedAt: Date.now(),
             });
             console.log("💾 캐싱 완료", queryKey, editor.getHTML().slice(0, 50));
-        },10000); //1분마다 저장ㄱㄱ
+        },10000); 
         return () => clearInterval(interval);
     },[queryKey,documentId,title, templateType, approvers, writer, editor]);
 
