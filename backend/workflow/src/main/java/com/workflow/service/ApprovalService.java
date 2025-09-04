@@ -82,8 +82,10 @@ public class ApprovalService {
         //nextOne이 null이 아니면 상태 바꾸고, 없으면 서류 approved
         if(nextOne != null){
             nextOne.setStatus(APPROVALSTATUS.PENDING);
+            //서버 docflow와 채팅방만들기(결재할 문서가 있을 떄 멘션됐을 때 알람이 이쪽으로 온다)
         }else{
             document.setStatus(DOCUMENTSTATUS.APPROVED);
+            //결재 완료되면 기안자에게 알람발송
         }
     }
 }

@@ -115,7 +115,7 @@ export default function ChatSidebar() {
         <div key={room.id} className="chatroom-modal-backdrop" style={{ right: `${idx * 420 + 10}px` }}>
           <div className="chatroom-modal-content">
             <button className="chatroom-close-btn" onClick={() => closeChatRoom(room.id)}>×</button>
-            <ChatRoom roomId={room.id} roomName={room.name} _userId={userId} _userName={userName} />
+            <ChatRoom roomId={room.id} roomName={room.name} _userId={userId} _userName={userName} currentRoomId={currentRoomId}/>
           </div>
         </div>
       ))}

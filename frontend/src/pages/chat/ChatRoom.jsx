@@ -4,17 +4,19 @@
   import { useChatSocket } from "../../hooks/useChatSocket";
   import { useChat } from "../../components/ChatProvider";
 
-  export default function ChatRoom({ roomId, roomName, _userId, _userName, currentRoomId}) {
+  export default function ChatRoom({ roomId, roomName, _userId, _userName}) {
     const [messages, setMessages] = useState([]);
     const [inputValue, setInputValue] = useState("");
     const [unreadCount, setUnreadCount] = useState("");
     const messagesEndRef = useRef(null);
-    const { setCurrentRoomId } = useChat();
+    const { currentRoomId, setCurrentRoomId } = useChat();
     const userId = Number(_userId);
-    
+    console.log("방",roomId+ '현제빙',currentRoomId)
+    console.log("방",typeof(roomId)+ '현제빙',typeof(currentRoomId))
     //websocket 연결
     const { sendMessageWebsocket } = useChatSocket(roomId, (msg) => {
-      if(roomId !== currentRoomId){
+      setMessages(prev => [...prev, msg]);
+      if(msg.roomId !== currentRoomId){
         setUnreadCount(prev => prev +1);
       }
     });
@@ -38,12 +40,13 @@
       const newMsg = {
         id: Date.now(), // 임시 key
         createdAt: new Date().toISOString(),
+        roomId: roomId,
         senderId: userId,
+        senderName : _userName,
         type: "NORMAL",
         content: inputValue
       };
 
-      setMessages([...messages, newMsg]);
       setInputValue("");
 
       try {
@@ -55,7 +58,7 @@
         });
 
         //websocket 전송
-        sendMessageWebsocket(newMsg.content, userId, _userName);
+        sendMessageWebsocket(newMsg.id, newMsg.content, userId, _userName);
       } catch (err) {
         console.error(err);
         alert("메시지 전송 실패");
