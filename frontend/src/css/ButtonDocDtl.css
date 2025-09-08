@@ -1,0 +1,40 @@
+.btn {
+  padding: 8px 16px;
+  margin: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* 각 버튼 색상 구분 */
+.edit-btn {
+  background-color: #f0f0f0;
+  color: #333;
+}
+.edit-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.submit-btn {
+  background-color: #454f7cff;
+  color: white;
+}
+.submit-btn:hover {
+  background-color: rgb(41, 52, 100);
+}
+
+.approve-btn {
+  background-color: #454f7cff;
+  color: white;
+}
+.approve-btn:hover {
+  background-color: rgb(41, 52, 100);
+}
+
+/* 공통 그림자와 호버 효과 */
+.btn:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}

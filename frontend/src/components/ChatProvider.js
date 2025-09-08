@@ -30,20 +30,23 @@ export const ChatProvider = ({ children }) => {
       showChatToast(message);
     }
 
-    setRooms(prevRooms =>
-    prevRooms.map(room =>
-      room.id === roomId
-        ? {
-            ...room,
-            content: message.content,              // 마지막 메시지
-            time: message.time,                    // 마지막 메시지 시간
-            unReadMessage: room.id === currentRoomId
-              ? 0                                  // 내가 열고 있는 방이면 0
-              : (room.unReadMessage || 0) + 1,    // 아니면 +1
-          }
-        : room
-    ) 
-  );
+    setRooms(prevRooms => {
+      const updatedRooms = prevRooms.map(room =>
+        room.id === roomId
+          ? {
+              ...room,
+              content: message.content,
+              time: message.time || new Date().toISOString(),
+              unReadMessage: room.id === currentRoomId ? 0 : (room.unReadMessage || 0) + 1,
+            }
+          : room
+      );
+
+      // 해당 room만 앞으로 이동
+      const targetRoom = updatedRooms.find(r => r.id === roomId);
+      const otherRooms = updatedRooms.filter(r => r.id !== roomId);
+      return [targetRoom, ...otherRooms];
+    });
     
   });
 

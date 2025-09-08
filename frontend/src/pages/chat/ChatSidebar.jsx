@@ -95,11 +95,27 @@ export default function ChatSidebar() {
                   </div>
                   <div className="room-right">
                   <span className="time">
-                    {new Date(room.time || Date.now()).toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit', 
-                        timeZone: "Asia/Seoul" 
-                    })}
+                    {(() => {
+                      const msgDate = new Date(room.time || Date.now());
+                      const today = new Date();
+
+                      // 오늘 날짜인지 비교
+                      const isToday =
+                        msgDate.getFullYear() === today.getFullYear() &&
+                        msgDate.getMonth() === today.getMonth() &&
+                        msgDate.getDate() === today.getDate();
+
+                      return isToday
+                        ? msgDate.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            timeZone: "Asia/Seoul",
+                          })
+                        : msgDate.toLocaleDateString("ko-KR", {
+                            month: "2-digit",
+                            day: "2-digit",
+                          });
+                    })()}
                   </span>
                   {room.unReadMessage > 0 && (
                     <span className="unread-badge">{room.unReadMessage}</span>

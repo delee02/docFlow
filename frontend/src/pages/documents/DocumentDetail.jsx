@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import api from "../../api/api";
 import ApprovalModal from "./ApprovalModal";
-
+import '../../css/ButtonDocDtl.css'
 const STATUS_COLOR = {
   SAVE: "#E0E0E0",
   IN_PROGRESS: "#BBDEFB",
@@ -191,24 +191,25 @@ const DocumentDetailView = () => {
           <div style={{ display: 'flex', gap: 8 }}>
             {/* 작성자인 경우 */}
 
-            {form.writer?.id === currentUser  && form.status ==='DRAFT' &&(
-                <button type="button" onClick={() => handleEdit(form)}>
-                수정
-                </button>
-            )}
-            {form.writer?.id === currentUser && form.status ==='DRAFT' && (
-                <button type="button" onClick={() => handleSubmitMyDoc()}>
-                제출
-                </button>
-            )}
+            {form.writer?.id === currentUser && form.status === 'DRAFT' && (
+  <button className="btn edit-btn" onClick={() => handleEdit(form)}>
+    수정
+  </button>
+)}
+{form.writer?.id === currentUser && form.status === 'DRAFT' && (
+  <button className="btn submit-btn" onClick={handleSubmitMyDoc}>
+    제출
+  </button>
+)}
+{displayApprovers.some(
+  (a) => a.status === 'PENDING' && a.userId === currentUser
+) && (
+  <button className="btn approve-btn" onClick={handleAddApproval}>
+    결재
+  </button>
+)}
 
-            {displayApprovers.some(
-                (a) => a.status === 'PENDING' && a.userId === currentUser
-              ) && (
-                <button type="button" onClick={handleAddApproval}>
-                  결재
-                </button>  
-            )}
+
             {showSearchModal && (
               <ApprovalModal
                docId = {docId}

@@ -25,6 +25,7 @@ public class ApprovalService {
     private final ApprovalRepository approvalRepository;
     private final UserRepository userRepository;
     private final DocumentRepository documentRepository;
+    private final ChatService chatService;
 
     //서류 해당 결재자 정보 가져오기
     public List<UserListRequest> getFlowByDoc (Long teamId, Long upperLevel){
@@ -83,9 +84,11 @@ public class ApprovalService {
         if(nextOne != null){
             nextOne.setStatus(APPROVALSTATUS.PENDING);
             //서버 docflow와 채팅방만들기(결재할 문서가 있을 떄 멘션됐을 때 알람이 이쪽으로 온다)
+            chatService.sendDocflowMessage(nextOne.getUserId(), documentId);
         }else{
             document.setStatus(DOCUMENTSTATUS.APPROVED);
             //결재 완료되면 기안자에게 알람발송
+            chatService.sendDocflowMessage(document.getWriteId(), documentId);
         }
     }
 }
