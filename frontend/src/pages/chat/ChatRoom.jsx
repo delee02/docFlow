@@ -11,8 +11,7 @@
     const messagesEndRef = useRef(null);
     const { currentRoomId, setCurrentRoomId } = useChat();
     const userId = Number(_userId);
-    console.log("방",roomId+ '현제빙',currentRoomId)
-    console.log("방",typeof(roomId)+ '현제빙',typeof(currentRoomId))
+
     //websocket 연결
     const { sendMessageWebsocket } = useChatSocket(roomId, (msg) => {
       setMessages(prev => [...prev, msg]);
@@ -79,9 +78,28 @@
           {messages.map((msg, index) => {
             console.log("Rendering msg:", msg); 
             if (msg.type === "SYSTEM") {
+              const fullId =msg.content.split(" ")[0];
+              const [type, docId] = fullId.split("-");
               return (
                 <div key={msg.id} className="message system-message">
-                  {msg.content}
+                  {fullId} 결재 요청이 도착했습니다.
+                  <a 
+                    href={`/document/detail/${docId}`} 
+                    className="goto-link" 
+                    style={{
+                      display: "inline-block",
+                      marginLeft: "8px",
+                      marginTop: "10px",
+                      padding: "2px 6px",
+                      backgroundColor: "#c45647ff",
+                      color: "#fff",
+                      borderRadius: "4px",
+                      textDecoration: "none",
+                      fontSize: "0.75rem"
+                    }}
+                  >
+                    상세보기
+                  </a>
                 </div>
               );
             }

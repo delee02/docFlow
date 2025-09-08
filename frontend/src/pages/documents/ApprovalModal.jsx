@@ -73,12 +73,49 @@ console.log("user: ", userId, "doc:",docId);
             outline: "none",
           }}
         />
-        <button type="button" onClick = {() =>{handleApproval()}}>
-            승인
-        </button> 
-        <button type="button" >
-            반려
-        </button> 
+        {/* JSX - inline style */}
+        <button
+          type="button"
+          onClick={handleApproval}
+          style={{
+            padding: '8px 16px',
+            margin: '4px',
+            fontSize: '14px',
+            fontWeight: 600,
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            backgroundColor: '#454f7cff',
+            color: 'white',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+          }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#252d4eff'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#454f7cff'}
+        >
+          승인
+        </button>
+
+        <button
+          type="button"
+          style={{
+            padding: '8px 16px',
+            margin: '4px',
+            fontSize: '14px',
+            fontWeight: 600,
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            backgroundColor: '#f44336',
+            color: 'white',
+            transition: 'all 0.2s ease',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+          }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
+        >
+          반려
+        </button>
       </div>
     </>
   );

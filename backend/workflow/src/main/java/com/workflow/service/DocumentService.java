@@ -32,6 +32,7 @@ public class DocumentService {
     private final ApprovalRepository approvalRepository;
     private final RedisTemplate redisTemplate;
     private final UserRepository userRepository;
+    private final ChatService chatService;
 
     //서류 저장
     public void saveDocument(DocumentRequest request) {
@@ -107,7 +108,11 @@ public class DocumentService {
         document.setStatus(DOCUMENTSTATUS.IN_PROGRESS);
         document.getApprovalLines().stream()
                 .filter(a -> a.getApprovalOrder() == 1)
-                .forEach(a -> a.setStatus(APPROVALSTATUS.PENDING));
+                .forEach(a -> {
+                    a.setStatus(APPROVALSTATUS.PENDING);
+                    chatService.sendDocflowMessage(a.getUserId(), docId);
+                });
+
     }
 
     //나랑 연관되어 있는 서류

@@ -10,16 +10,11 @@ import com.workflow.DTO.response.NewChatResponse;
 import com.workflow.constants.MESSAGETYPE;
 import com.workflow.constants.ROOMTYPE;
 
-import com.workflow.entity.ChatMessage;
-import com.workflow.entity.ChatRoom;
-import com.workflow.entity.ChatRoomMember;
-import com.workflow.entity.User;
-import com.workflow.repository.ChatMessageRepository;
-import com.workflow.repository.ChatRepository;
-import com.workflow.repository.ChatRoomMemberRepository;
-import com.workflow.repository.UserRepository;
+import com.workflow.entity.*;
+import com.workflow.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +31,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatService {
     private final RedisTemplate redisTemplate;
+    private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatRepository chatRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
+    private final DocumentRepository documentRepository;
 
     //채팅방 리스트 가져오기
     public List<ChatRoomListResponse> getChatList(Long userId){
@@ -106,7 +103,7 @@ public class ChatService {
 
 
     //새로운 메세지 추가
-    public void newMessage(ChatMessageRequest message) {
+    public ChatMessage newMessage(ChatMessageRequest message) {
         ChatRoom chatRoom = chatRepository.findById(message.getRoomId()).orElseThrow(() -> new IllegalArgumentException("요효하지 않은 메세지"));
 
         ChatMessage newMsg = new ChatMessage();
@@ -119,6 +116,8 @@ public class ChatService {
 
         //안읽음 redis 추가
         incrementUnread(message.getRoomId(), message.getSenderId());
+
+        return newMsg;
     }
 
 
@@ -170,7 +169,7 @@ public class ChatService {
 
         return newChatResponse;
     }
-    //서버메세지 받기 위한 함수
+    //서버메세지 받기 위한 함수(결재, 멘션을 위함)
     public void sendDocflowMessage(Long userId, Long documentId){
         NewChatRequest docChat = new NewChatRequest();
         List<Long> users = new ArrayList<>();
@@ -184,33 +183,30 @@ public class ChatService {
 
         //새채팅 메세지 추가
         ChatMessageRequest message = new ChatMessageRequest();
+        Document doc = documentRepository.findById(documentId).orElseThrow(()-> new  IllegalArgumentException("서류ID가 없습니다"));
+        String type = doc.getType();
         message.setRoomId(returnChat.getId());
         message.setSenderId(0L);
         message.setType(MESSAGETYPE.SYSTEM);
-        message.setContent();
+        message.setContent(type+"-"+doc.getId());
+        message.setCreatedAt(Instant.now());
+
+        //새로운 메세지 저장
+        ChatMessage chat = newMessage(message);
 
         //웹소켓 보내기
         ChatMessageResponse msg = new ChatMessageResponse();
-        msg.set
+        msg.setId(chat.getId());
+        msg.setRoomId(chat.getRoom().getId());
+        msg.setSenderId(chat.getSenderId());
+        msg.setSenderName("DocFlow");
+        msg.setContent(chat.getContent());
+        msg.setType(chat.getType());
+        msg.setCreatedAt(chat.getCreatedAt());
 
-
+        simpMessagingTemplate.convertAndSend("/topic/room/" + msg.getRoomId(), msg);
 
         }
-    private Long roomId;
-    private Long senderId;
-    private String content;
-    private MESSAGETYPE type;
-    private Instant createdAt;
-
-
-    private Long id;
-    private Long roomId;
-    private Long senderId;
-    private String senderName;
-    private String content;
-    private MESSAGETYPE type;
-    private Instant createdAt;
-
 
     //안읽은 메세지 추가를 위해
     public void incrementUnread(Long roomId, Long senderId){
