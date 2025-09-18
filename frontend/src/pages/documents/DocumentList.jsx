@@ -18,15 +18,25 @@ const DocumentList = () => {
       navigate(`/document/detail/${docId}`);
     } 
 
+    const documnetStatus = {
+      APPROVED : "완료",
+      IN_PROGRESS : "진행중",
+      DRAFT : "저장",
+      REJECTED : "반려",
+    }
+
+    const STATUS_COLOR = {
+      DRAFT: "#E0E0E0",
+      IN_PROGRESS: "#BBDEFB",
+      REJECTED: "#FFCDD2",
+      COMPLETED: "#C8E6C9",
+    };
     
     return (<div style={styles.container}>
         <div>
         <Sidebar/>
         </div>
       <main style={styles.mainContent}>
-        <div style={styles.header}>
-          <button type="button" name="add" style={styles.addButton}>➕ 추가</button>
-        </div>
         <table style={styles.table}>
           <thead>
             <tr>
@@ -41,10 +51,21 @@ const DocumentList = () => {
             {document.map((doc,index) => (
               <tr key={doc.id} style={styles.tr}>
                 <td style={styles.td}>{index +1}</td>
-                <td style={styles.td}>{doc.templateType}-{doc.id}</td>
+                <td style={styles.td}>doc-{doc.id}</td>
                 <td style={styles.td}>{doc.title}</td>
-                <td style={styles.td}>{doc.status}</td>
-                
+                <td>
+                  <div style={{
+                    display: 'inline-block',
+                    padding: '4px 8px',
+                    borderRadius: 8,
+                    backgroundColor: STATUS_COLOR[doc.status] || "#F5F5F5",
+                    whiteSpace: 'nowrap',     // 글자가 한 줄에서 줄바꿈되지 않도록
+                    textAlign: 'center',      // 글자 가운데 정렬
+                    width: '50px',               // 최소 폭, 내용에 따라 늘어남
+                  }}>
+                  {documnetStatus[doc.status] || doc.status}
+                  </div>
+                </td>
                 <td style={{ padding: '12px' }}>
                   <button
                     style={{ cursor: 'pointer', backgroundColor: '#ffc107', border: 'none', borderRadius: '4px', padding: '4px 8px'}}
@@ -71,15 +92,6 @@ const styles = {
   borderBottom: '3px solid transparent',
   
 },
-addButton: {
-  backgroundColor: '#28a745',
-  color: 'white',
-  border: 'none',
-  padding: '8px 16px',
-  fontSize: '14px',
-  cursor: 'pointer',
-  borderRadius: '4px',
-},
   container: {
     display: 'flex',
   },
@@ -96,7 +108,7 @@ addButton: {
     boxShadow: '0 0 10px rgba(0,0,0,0.05)',
   },
   th: {
-    textAlign: 'left',
+    textAlign: 'center',
     padding: '12px',
     backgroundColor: '#454f7cff',
     color: 'white',
@@ -104,9 +116,11 @@ addButton: {
     borderBottom: '2px solid #dee2e6',
   },
   tr: {
+    textAlign: 'center',
     borderBottom: '1px solid #dee2e6',
   },
   td: {
+    textAlign: 'center',
     padding: '12px',
     color: '#333',
   },

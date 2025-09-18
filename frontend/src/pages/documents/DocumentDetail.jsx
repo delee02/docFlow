@@ -5,10 +5,16 @@ import api from "../../api/api";
 import ApprovalModal from "./ApprovalModal";
 import '../../css/ButtonDocDtl.css'
 const STATUS_COLOR = {
-  SAVE: "#E0E0E0",
+  DRAFT: "#E0E0E0",
   IN_PROGRESS: "#BBDEFB",
   REJECTED: "#FFCDD2",
   COMPLETED: "#C8E6C9",
+};
+const documnetStatus = {
+      APPROVED : "완료",
+      IN_PROGRESS : "진행중",
+      DRAFT : "저장",
+      REJECTED : "반려",
 };
 
 const DocumentDetailView = () => {
@@ -72,10 +78,9 @@ const DocumentDetailView = () => {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h1 style={{ fontSize: 28, fontWeight: "bold" }}>{form.title}</h1>
             <span style={{ padding: "6px 12px", borderRadius: 8, backgroundColor: STATUS_COLOR[form.status] || "#F5F5F5" }}>
-              {form.status}
+              {documnetStatus[form.status] || form.status}
             </span>
           </div>
-          <div style={{ fontSize: 16, color: "#555" }}>종류: {form.templateType}</div>
 
           {/* 작성자 + 결재선 */}
           <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
@@ -176,7 +181,7 @@ const DocumentDetailView = () => {
                 <tr style={{ height: 18, fontSize: 11, color: "#000000ff" }}>
                   {displayApprovers.map(({ status }, idx) => (
                     <td key={idx} style={{ border: "1px solid #ccc", padding: 0 }}>
-                      {status}상태
+                      {status}
                     </td>
                   ))}
                 </tr>

@@ -9,7 +9,7 @@ export const restoreDraft = (userId) => {
     if(!savedDraft) return null;
 
     const confirmRestore = window.confirm(
-        "이전에 작성 중이던 문서가 있습니다. 이어서 작성하실?"
+        "이전에 작성 중이던 문서가 있습니다. 이어서 작성하시겠습니까?"
     );
 
     return confirmRestore? savedDraft : null;

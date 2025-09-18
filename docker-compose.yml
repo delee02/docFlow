@@ -1,10 +1,12 @@
-version: "3.9"
-
 services:
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: http://backend:8080
     ports:
-      - "3000:80"    # 호스트 3000번 포트를 컨테이너 80번 포트에 연결 (React는 Nginx 80포트 사용)
+      - "80:80"
     depends_on:
       - backend
 
@@ -17,10 +19,13 @@ services:
     depends_on:
       - python
       - mysql
+      - redis
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/docflow
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 1234
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379 
 
 
   python:
@@ -40,5 +45,15 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
 
+  redis:
+    image: redis:7.0
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
 volumes:
   mysql-data:
+  redis-data:

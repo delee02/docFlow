@@ -17,7 +17,7 @@ export const useChatSocket = (roomId, onMessageReceived) => {
     if (!roomId) return; // roomId 없으면 연결하지 않음
 
     if (!clientRef.current) {
-      const socket = new SockJS("http://localhost:8080/ws-chat");
+      const socket = new SockJS(`/ws-chat`);
       const client = new Client({
         webSocketFactory: () => socket,
         reconnectDelay: 5000,
