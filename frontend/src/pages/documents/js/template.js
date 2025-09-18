@@ -1,6 +1,6 @@
 export const templates = [
   {
-    id: 'free',
+    id: 'doc',
     name: '양식 선택',
     content: ``,
     approvalFlow: [

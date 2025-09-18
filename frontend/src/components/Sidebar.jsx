@@ -19,9 +19,8 @@ const Sidebar = () => {
       <ul style={styles.ul}>
          {(role === 'ROLE_ADMIN') && (
           <>
-          <li><NavLink to="/admin/dashboard" style={styles.link} activeStyle={styles.active}>대시보드</NavLink></li>
+          <li><NavLink to="/admin/dashboard" style={styles.link} activeStyle={styles.active}>관리자 대시보드</NavLink></li>
           <li><NavLink to="/admin/team/list" style={styles.link} activeStyle={styles.active}>인사 관리</NavLink></li>
-          <li><NavLink to="/admin/documents" style={styles.link} activeStyle={styles.active}>결재 문서 관리</NavLink></li>
           </>
         )}
         <li><NavLink to="/dashboard" style={styles.link} activeStyle={styles.active}>대시보드</NavLink></li>

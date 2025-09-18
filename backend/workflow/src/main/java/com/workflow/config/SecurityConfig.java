@@ -1,5 +1,6 @@
 package com.workflow.config;
 
+import com.workflow.constants.ROLE;
 import com.workflow.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/ws-chat/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")  // 관리자 권한 필터링 추가
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")  // 관리자 권한 필터링 추가
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
